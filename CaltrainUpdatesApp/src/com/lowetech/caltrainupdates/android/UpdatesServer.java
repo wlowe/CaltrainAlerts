@@ -28,7 +28,12 @@ public class UpdatesServer
 {
 	private static final String TAG = UpdatesServer.class.getSimpleName();
 	private static AndroidHttpClient httpClient = AndroidHttpClient.newInstance("CaltrainUpdates");
-	private static final String SERVER = "caltrainupdates.appspot.com";
+	private static final String SERVER;
+	
+	static
+	{
+		SERVER = Constants.getUpdatesServerUrl();
+	}
 		
 	
 	public static JSONArray fetchUpdates(String sinceId) throws IOException, JSONException
@@ -45,7 +50,6 @@ public class UpdatesServer
 
 		try
 		{
-			//TODO: a better debug method for this.
 			reqUri = URIUtils.createURI("http", SERVER, -1, "/updates", URLEncodedUtils.format(qparams, "UTF-8"), null);
 		}
 		catch (URISyntaxException e)
