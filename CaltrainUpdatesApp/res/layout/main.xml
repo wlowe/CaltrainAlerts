@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<Button android:text="refresh" 
+		android:id="@+id/Button01" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" />
+	<Button android:text="register" 
+		android:id="@+id/buttonRegister" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" />
+	<TextView android:id="@+id/ErrorText"
+		android:visibility="gone"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="error" />
+
+ 	<ListView android:id="@id/android:list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:drawSelectorOnTop="false"/>
+               
+	<TextView android:id="@id/android:empty"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:text="No data"/>
+               
+
+</LinearLayout>

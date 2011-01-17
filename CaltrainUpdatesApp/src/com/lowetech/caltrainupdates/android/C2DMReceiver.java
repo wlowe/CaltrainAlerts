@@ -1,0 +1,62 @@
+package com.lowetech.caltrainupdates.android;
+
+import java.io.IOException;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import com.google.android.c2dm.C2DMBaseReceiver;
+
+//TODO: merge this class with UpdatesServer
+public class C2DMReceiver extends C2DMBaseReceiver
+{
+	private static final String TAG = C2DMReceiver.class.getSimpleName();
+	
+	public C2DMReceiver() 
+	{
+        super(Constants.C2DM_SENDER);
+    }
+
+	@Override
+	public void onError(Context context, String errorId)
+	{
+		Log.e(TAG, errorId);
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void onMessage(Context context, Intent intent)
+	{
+		// TODO Auto-generated method stub
+		Log.i(TAG, "got C2DMessage");
+		
+		Log.i(TAG, "keys: " + intent.getExtras().keySet().toString());
+		String twitterId = intent.getExtras().getString("twitterId");
+		
+		if (twitterId != null)
+		{		
+			Intent serviceIntent = new Intent(UpdatesService.REFRESH_ACTION);
+			serviceIntent.putExtra("latestServerTwitterId", twitterId);
+			startService(serviceIntent);
+		}
+	}
+	
+	
+	@Override
+    public void onRegistered(Context context, String registrationId) throws IOException 
+    {
+		Log.i(TAG, "registering client...");
+		UpdatesServer.registerClient(registrationId);		
+    }
+
+	@Override
+    public void onUnregistered(Context context) 
+    {
+    }
+	
+	
+	
+
+}
