@@ -11,12 +11,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
@@ -30,6 +37,7 @@ public class UpdatesService extends IntentService
 	public static final String REFRESH_ACTION = "com.lowetech.caltrainupdates.android.refresh";
 	public static final String EXTRA_LATEST_AVAILABLE_TWEET = "latestServerTwitterId";
 	private static final String TAG = UpdatesService.class.getSimpleName();
+	private static final int ALERT_ID = 1;
 
 	public UpdatesService()
 	{
@@ -47,20 +55,55 @@ public class UpdatesService extends IntentService
 		
 		if (REFRESH_ACTION.equals(action))
 		{
-			String latestIdStr = intent.getStringExtra(EXTRA_LATEST_AVAILABLE_TWEET);
-			long latestId = -1;
-			
-			if (latestIdStr != null)
+			try
 			{
-				latestId = Long.parseLong(latestIdStr);
+				String latestIdStr = intent.getStringExtra(EXTRA_LATEST_AVAILABLE_TWEET);
+				long latestId = -1;
+				
+				if (latestIdStr != null)
+				{
+					latestId = Long.parseLong(latestIdStr);
+				}
+				
+				int numUpdates = refreshUpdates(latestId);
+				
+				if (numUpdates > 0)
+				{
+					
+					Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), Settings.System.DEFAULT_NOTIFICATION_URI);
+					ringtone.play();
+					
+					String ns = Context.NOTIFICATION_SERVICE;
+					NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+					//int icon = R.drawable.notification_icon;
+					int icon = android.R.drawable.stat_notify_call_mute;
+					CharSequence tickerText = "New Caltrain alerts";
+					long when = System.currentTimeMillis();
+	
+					Notification notification = new Notification(icon, tickerText, when);
+					notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+					notification.flags |= Notification.FLAG_AUTO_CANCEL;
+					Context context = getApplicationContext();
+					CharSequence contentTitle = tickerText;
+					CharSequence contentText = "There are " + numUpdates + " Caltrain alerts available.";
+					Intent notificationIntent = new Intent(this, Main.class);
+					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+					notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+					mNotificationManager.notify(ALERT_ID, notification);
+	//				mNotificationManager.
+					
+					
+				}
 			}
-			
-			refreshUpdates(latestId);
+			finally
+			{
+				ServiceHelper.onServerEvent(ServiceHelper.REFRESH_FINISHED_EVENT, null);
+			}
 		}
 
 	}
 	
-	private void refreshUpdates(long latestAvailableId)
+	private int refreshUpdates(long latestAvailableId)
 	{
 		try
 		{
@@ -92,7 +135,7 @@ public class UpdatesService extends IntentService
 					
 						if (latestLocalId > latestAvailableId)
 						{
-							return;
+							return 0;
 						}
 					}
 						
@@ -110,20 +153,26 @@ public class UpdatesService extends IntentService
 			JSONObject currObject;
 			
 			int size = resultArray.length();
-			ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
-            ContentProviderOperation.Builder builder;
 			
-			for (int i = 0; i < size; i++)
+			if (size > 0)
 			{
-				currObject = resultArray.getJSONObject(i);
-				builder = ContentProviderOperation.newInsert(Constants.TrainUpdates.CONTENT_URI);
-				builder.withValue(TrainUpdates.DATE, currObject.opt("date"));
-				builder.withValue(TrainUpdates.TEXT, currObject.opt("text"));
-				builder.withValue(TrainUpdates.TWITTER_ID, currObject.opt("twitterId"));
-				operationList.add(builder.build());
+				ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
+	            ContentProviderOperation.Builder builder;
+				
+				for (int i = 0; i < size; i++)
+				{
+					currObject = resultArray.getJSONObject(i);
+					builder = ContentProviderOperation.newInsert(Constants.TrainUpdates.CONTENT_URI);
+					builder.withValue(TrainUpdates.DATE, currObject.opt("date"));
+					builder.withValue(TrainUpdates.TEXT, currObject.opt("text"));
+					builder.withValue(TrainUpdates.TWITTER_ID, currObject.opt("twitterId"));
+					operationList.add(builder.build());
+				}
+	
+				resolver.applyBatch(Constants.AUTHORITY, operationList);
+				
+				return size;
 			}
-
-			resolver.applyBatch(Constants.AUTHORITY, operationList);
 		}
 		catch (IOException ex)
 		{
@@ -141,6 +190,9 @@ public class UpdatesService extends IntentService
 		{
 			Log.e(TAG, "Error processing updates", ex);
 		}
+		
+		return 0;
 	}
 
+	
 }

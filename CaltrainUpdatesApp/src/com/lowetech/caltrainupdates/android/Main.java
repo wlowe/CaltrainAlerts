@@ -1,26 +1,26 @@
 package com.lowetech.caltrainupdates.android;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import java.util.HashMap;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 
 import com.google.android.c2dm.C2DMessaging;
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
 
-public class Main extends ListActivity 
-{
+public class Main extends ListActivity implements ServerEventListener 
+{		
 	
 	/**
      * The columns we are interested in from the database
@@ -30,57 +30,32 @@ public class Main extends ListActivity
             TrainUpdates.DATE, // 1
             TrainUpdates.TEXT
     };
-	
-	private static class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
-	     protected Long doInBackground(URL... urls) 
-	     {
-
-	    	 JSONArray result;
-	 		try
-	 		{
-	 			result = UpdatesServer.fetchUpdates(null);
-	 			System.out.println(result);
-	 		}
-	 		catch (IOException e)
-	 		{
-	 			// TODO Auto-generated catch block
-	 			e.printStackTrace();
-	 		}
-	 		catch (JSONException e)
-	 		{
-	 			// TODO Auto-generated catch block
-	 			e.printStackTrace();
-	 		}
-	    	 
-	         return 0L;
-	     }
-
-	     protected void onProgressUpdate(Integer... progress) {
-//	         setProgressPercent(progress[0]);
-	     }
-
-	     protected void onPostExecute(Long result) {
-//	         showDialog("Downloaded " + result + " bytes");
-	     }
-	 }
-
-	
+    
+    private Handler serverEventHandler = new Handler()
+    {
+    	public void handleMessage(android.os.Message msg)
+    	{
+    		if (msg.what == ServiceHelper.REFRESH_FINISHED_EVENT)
+    		{
+    			setSpinnerState(false);		
+    		}
+    	}
+    };
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Button buttonRefresh = (Button) findViewById(R.id.Button01);
+        final ImageButton buttonRefresh = (ImageButton) findViewById(R.id.buttonRefresh);
         
         buttonRefresh.setOnClickListener(new OnClickListener()
 		{
 			
 			public void onClick(View v)
 			{
-				Intent serviceIntent = new Intent(UpdatesService.REFRESH_ACTION);
-				startService(serviceIntent);
-				
+				ServiceHelper.fetchUpdates(getApplicationContext());				
+				setSpinnerState(true);				
 			}
 		});
         
@@ -91,15 +66,7 @@ public class Main extends ListActivity
 			
 			public void onClick(View v)
 			{
-				C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
-//				Intent registrationIntent = new Intent("com.google.android.c2dm.intent.REGISTER");
-//		        registrationIntent.setPackage("com.google.android.gsf");
-//		        registrationIntent.putExtra("app",
-//		                PendingIntent.getBroadcast(Main.this, 0, new Intent(), 0));
-//		        registrationIntent.putExtra("sender", "jumpnoteapp@gmail.com");//Constants.C2DM_SENDER);
-//		        ComponentName serviceName = Main.this.startService(registrationIntent);
-//		        Log.i("C2DMessaging", serviceName.flattenToString());
-				
+				C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);				
 			}
 		});
         
@@ -119,4 +86,45 @@ public class Main extends ListActivity
         
     	
     }
+    
+    @Override
+    protected void onStart()
+    { 
+    	super.onStart();    	
+    	ServiceHelper.addListener(this);
+    	boolean spinnerState = ServiceHelper.isEventPending(ServiceHelper.REFRESH_FINISHED_EVENT);
+    	setSpinnerState(spinnerState);
+    }
+    
+    @Override
+    protected void onStop()
+    {
+    	super.onStop();    	
+    	ServiceHelper.removeListener(this);
+    }
+
+	public void onServerEvent(int eventId, HashMap<String, Object> extras)
+	{
+		serverEventHandler.sendEmptyMessage(eventId);
+	}
+	
+	private void setSpinnerState(boolean isActive)
+	{
+		ImageButton buttonRefresh = (ImageButton) findViewById(R.id.buttonRefresh);
+		ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
+		
+		if (isActive)
+		{			
+			imageRefresh.setVisibility(View.VISIBLE);
+			buttonRefresh.setVisibility(View.GONE);
+			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
+			imageRefresh.startAnimation(rotate);
+		}
+		else
+		{			
+			imageRefresh.clearAnimation();
+			imageRefresh.setVisibility(View.GONE);			
+			buttonRefresh.setVisibility(View.VISIBLE);
+		}
+	}
 }

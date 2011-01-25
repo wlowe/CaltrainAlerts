@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import junit.framework.Assert;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 /**
@@ -69,7 +71,7 @@ public class ServiceHelper
 		}
 	}
 	
-	public static void fetchUpdates()
+	public static void fetchUpdates(Context context)
 	{
 		synchronized(pendingEvents)
 		{
@@ -85,7 +87,8 @@ public class ServiceHelper
 			pendingEvents.add(eventId);
 		}
 		
-		//TODO: actually make call
+		Intent serviceIntent = new Intent(UpdatesService.REFRESH_ACTION);
+		context.startService(serviceIntent);
 	}
 	
 	//TODO: register

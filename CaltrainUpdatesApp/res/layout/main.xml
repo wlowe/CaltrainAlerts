@@ -4,14 +4,33 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-	<Button android:text="refresh" 
-		android:id="@+id/Button01" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" />
-	<Button android:text="register" 
-		android:id="@+id/buttonRegister" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" />
+    <LinearLayout
+    	android:orientation="horizontal"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="right"
+    	style="@style/CaltrainUpdates.ActionBar"
+    	>
+		<ImageButton 
+			android:src="@drawable/refresh"
+			android:background="@android:color/transparent"
+			android:id="@+id/buttonRefresh" 
+			android:layout_height="48dp" android:layout_width="48dp"
+			/>
+		<ImageView
+			android:src="@drawable/refresh"
+			android:background="@android:color/transparent"
+			android:id="@+id/imageRefresh" 
+			android:layout_height="48dp" android:layout_width="48dp"
+			android:visibility="gone"
+			/>
+			
+		<Button android:text="register" 
+			android:id="@+id/buttonRegister" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:visibility="gone"/>
+	</LinearLayout>
 	<TextView android:id="@+id/ErrorText"
 		android:visibility="gone"
 		android:layout_width="fill_parent"
