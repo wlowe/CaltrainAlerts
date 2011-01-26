@@ -18,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FetchUpdates</servlet-name>
-		<url-pattern>/fetchupdates</url-pattern>
+		<url-pattern>/admin/fetchupdates</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>Updates</servlet-name>
@@ -51,6 +51,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>PingClient</servlet-name>
 		<url-pattern>/admin/notifyclient</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>DeleteOldUpdates</servlet-name>
+		<servlet-class>com.lowetech.caltrainupdates.DeleteOldUpdatesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteOldUpdates</servlet-name>
+		<url-pattern>/admin/deleteold</url-pattern>
 	</servlet-mapping>
 	  <servlet>
     <servlet-name>c2dmRetryServlet</servlet-name>

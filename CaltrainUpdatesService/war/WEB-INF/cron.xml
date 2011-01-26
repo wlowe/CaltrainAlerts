@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
   <cron>
-    <url>/fetchupdates</url>
+    <url>/admin/fetchupdates</url>
     <description>Fetch train updates every x minutes</description>
     <schedule>every 2 minutes</schedule>
+  </cron>
+  <cron>
+    <url>/admin/deleteold</url>
+    <description>Delete old updates every x hours</description>
+    <schedule>every 1 hours</schedule>
   </cron>
 </cronentries>

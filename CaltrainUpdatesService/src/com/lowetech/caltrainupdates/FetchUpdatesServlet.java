@@ -8,7 +8,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -44,25 +43,12 @@ public class FetchUpdatesServlet extends HttpServlet
 		
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
-//		long twitterId = 1;
-//		String text = "text";
-//		Date date = new Date();
-//		TrainUpdate tUpdate = new TrainUpdate(twitterId, text, date);
-//		pm.makePersistent(tUpdate);
-//		pm.close();
-//		
-		pm = PMF.get().getPersistenceManager();
+
 		Query query = pm.newQuery(TrainUpdate.class);
 		query.setOrdering("date DESC");
 		query.setRange(0,1);
-		//query.setRange(arg0, arg1)
+
 		List<TrainUpdate> oldUpdates = (List<TrainUpdate>)query.execute();
-		
-//		resp.getWriter().println("Old updates:");
-//		for (TrainUpdate update : oldUpdates)
-//		{
-//			resp.getWriter().println(update.toString());
-//		}
 		
 		long sinceId = -1;
 		if (oldUpdates.size() > 0)
@@ -119,35 +105,7 @@ public class FetchUpdatesServlet extends HttpServlet
         		
         	}
         	
-        	pm.makePersistentAll(newUpdates);
-        	
-        	query = pm.newQuery(TrainUpdate.class);
-        	//query.setOrdering("date DESC");
-//        	DateTime dt;
-        	Calendar cal = Calendar.getInstance();
-        	log.info("Curr date" + cal.getTime().toString());
-        	cal.add(Calendar.DAY_OF_YEAR, -1);
-        	Date cutOff = cal.getTime();
-        	query.setFilter("date <= :date");
-    		//DateTime date = new DateTime();
-    		//Date cutOff = //new Date(date.minusHours(1));
-        	//query.setRange(101, 5000);
-        	
-        	log.info("Deleting older than: " + cutOff.toString());
-        	List<TrainUpdate> deletedUpdates = (List<TrainUpdate>)query.execute(cutOff);
-        	long numDeleted = deletedUpdates.size();
-        	
-        	for (TrainUpdate update : deletedUpdates)
-        	{
-        		log.info("Will delete" + update.toString());
-        	}
-        	
-        	//TODO: delete using this method
-    		//long numDeleted = query.deletePersistentAll(cutOff);
-    		
-    		log.info("Deleted " + numDeleted + " stale updates");
-    		
-    		pm.deletePersistentAll(deletedUpdates);
+        	pm.makePersistentAll(newUpdates);        	
     		
     		if (!newUpdates.isEmpty())
     		{
