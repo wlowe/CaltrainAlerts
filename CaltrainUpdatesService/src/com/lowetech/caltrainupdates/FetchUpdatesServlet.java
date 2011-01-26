@@ -125,18 +125,34 @@ public class FetchUpdatesServlet extends HttpServlet
         	//query.setOrdering("date DESC");
 //        	DateTime dt;
         	Calendar cal = Calendar.getInstance();
+        	log.info("Curr date" + cal.getTime().toString());
         	cal.add(Calendar.DAY_OF_YEAR, -1);
         	Date cutOff = cal.getTime();
         	query.setFilter("date <= :date");
     		//DateTime date = new DateTime();
     		//Date cutOff = //new Date(date.minusHours(1));
         	//query.setRange(101, 5000);
-    		long numDeleted = query.deletePersistentAll(cutOff);
+        	
+        	log.info("Deleting older than: " + cutOff.toString());
+        	List<TrainUpdate> deletedUpdates = (List<TrainUpdate>)query.execute(cutOff);
+        	long numDeleted = deletedUpdates.size();
+        	
+        	for (TrainUpdate update : deletedUpdates)
+        	{
+        		log.info("Will delete" + update.toString());
+        	}
+        	
+        	//TODO: delete using this method
+    		//long numDeleted = query.deletePersistentAll(cutOff);
     		
     		log.info("Deleted " + numDeleted + " stale updates");
     		
+    		pm.deletePersistentAll(deletedUpdates);
+    		
     		if (!newUpdates.isEmpty())
     		{
+    			// TODO: in some cases the latest ID might be deleted already.
+    			// I think this only happens when switching between feeds.
     			TrainUpdate latestUpdate = newUpdates.get(newUpdates.size() - 1);
     			Date latestUpdateDate = latestUpdate.getDate();
     			long lastestUpdateId = latestUpdate.getTwitterId();
