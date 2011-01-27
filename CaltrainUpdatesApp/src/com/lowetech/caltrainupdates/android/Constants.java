@@ -81,7 +81,7 @@ public final class Constants
         /**
          * The default sort order for this table
          */
-        public static final String DEFAULT_SORT_ORDER = "date DESC";
+        public static final String DEFAULT_SORT_ORDER = "twitterId DESC";
         
         public static final String DATE = "date";
         
