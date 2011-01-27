@@ -101,7 +101,7 @@ public class FetchUpdatesServlet extends HttpServlet
         		Date date = dateFormat.parse(dateStr);
         		TrainUpdate update = new TrainUpdate(twitterId, text, date);
         		newUpdates.add(update);
-        		resp.getWriter().println(update.toString());
+        		log.info("Added update: " + update.toString());
         		
         	}
         	
@@ -109,8 +109,6 @@ public class FetchUpdatesServlet extends HttpServlet
     		
     		if (!newUpdates.isEmpty())
     		{
-    			// TODO: in some cases the latest ID might be deleted already.
-    			// I think this only happens when switching between feeds.
     			TrainUpdate latestUpdate = newUpdates.get(newUpdates.size() - 1);
     			Date latestUpdateDate = latestUpdate.getDate();
     			long lastestUpdateId = latestUpdate.getTwitterId();
@@ -138,8 +136,8 @@ public class FetchUpdatesServlet extends HttpServlet
 	private void notifyClients(long latestUpdateId, Date latestUpdateDate, PersistenceManager pm) 
 	{
 		long timeMillis = latestUpdateDate.getTime();
-		String timeStr = timeMillis + "";
-		String collapseStr = (timeMillis / collapseFactor) + "";
+		//String timeStr = timeMillis + "";
+		String collapseStr = Long.toString(timeMillis / collapseFactor);
 		
 		Extent<UpdateClient> extent = pm.getExtent(UpdateClient.class);
 		
@@ -155,12 +153,7 @@ public class FetchUpdatesServlet extends HttpServlet
 					TaskOptions.Builder.withUrl(C2DMRetryServlet.URI)
 					.param(C2DMessaging.PARAM_REGISTRATION_ID, client.getRegistrationId())
 					.param(C2DMessaging.PARAM_COLLAPSE_KEY, collapseStr)
-					.param("data.twitterId", latestUpdateId+"");
-//	                TaskOptions.Builder.withUrl(NotifyClientServlet.URI)
-//	                .param(NotifyClientServlet.REG_ID_PARM, client.getRegistrationId())
-//	                .param(NotifyClientServlet.DATE_PARM, timeStr)
-//	                .param(NotifyClientServlet.COLLAPSE_KEY_PARM, collapseStr);
-	      
+					.param("data.twitterId", Long.toString(latestUpdateId));	      
 	            
 	            // Task queue implements the exponential backoff
 	            long jitter = (int) Math.random() * C2DM_MAX_JITTER_MSEC;
