@@ -75,6 +75,8 @@ public class FetchUpdatesServlet extends HttpServlet
             }
             reader.close();
             
+           // resp.getWriter().print(content.toString());
+            
 
         } catch (MalformedURLException e) {
             // ...
@@ -86,7 +88,9 @@ public class FetchUpdatesServlet extends HttpServlet
         
         try
 		{
+        	//resp.getWriter().println("\n\n===============\n\n");
         	JSONArray newEntries = new JSONArray(content.toString());
+        	//resp.getWriter().println(newEntries.toString());
         	int count = newEntries.length();
         	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
         	
@@ -95,13 +99,14 @@ public class FetchUpdatesServlet extends HttpServlet
         	for (int i = 0; i < count; i++)
         	{
         		JSONObject currEntry = newEntries.getJSONObject(i);
-        		long twitterId = currEntry.getLong("id_str");
+        		long twitterId = currEntry.getLong("id");
         		String text = currEntry.getString("text");
         		String dateStr = currEntry.getString("created_at");
         		Date date = dateFormat.parse(dateStr);
         		TrainUpdate update = new TrainUpdate(twitterId, text, date);
         		newUpdates.add(update);
         		log.info("Added update: " + update.toString());
+        		resp.getWriter().println(update.toString());
         		
         	}
         	
