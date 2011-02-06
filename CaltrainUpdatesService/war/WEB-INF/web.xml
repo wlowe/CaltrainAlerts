@@ -50,7 +50,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>PingClient</servlet-name>
-		<url-pattern>/admin/notifyclient</url-pattern>
+		<url-pattern>/admin/ping</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>DeleteOldUpdates</servlet-name>

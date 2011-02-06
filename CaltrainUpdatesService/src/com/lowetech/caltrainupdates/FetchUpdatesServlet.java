@@ -31,8 +31,7 @@ import com.google.appengine.repackaged.org.json.JSONObject;
 public class FetchUpdatesServlet extends HttpServlet 
 {
 	private static final Logger log = Logger.getLogger(FetchUpdatesServlet.class.getName());
-	private static final int collapseFactor = 1000 * 60 * 5;
-	public static final int C2DM_MAX_JITTER_MSEC = 3000;
+
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
@@ -142,7 +141,7 @@ public class FetchUpdatesServlet extends HttpServlet
 	{
 		long timeMillis = latestUpdateDate.getTime();
 		//String timeStr = timeMillis + "";
-		String collapseStr = Long.toString(timeMillis / collapseFactor);
+		String collapseStr = Long.toString(timeMillis / C2DMSettings.COLLAPSE_FACTOR);
 		
 		Extent<UpdateClient> extent = pm.getExtent(UpdateClient.class);
 		
@@ -158,10 +157,11 @@ public class FetchUpdatesServlet extends HttpServlet
 					TaskOptions.Builder.withUrl(C2DMRetryServlet.URI)
 					.param(C2DMessaging.PARAM_REGISTRATION_ID, client.getRegistrationId())
 					.param(C2DMessaging.PARAM_COLLAPSE_KEY, collapseStr)
+					.param("data.msgType", "notify")					
 					.param("data.twitterId", Long.toString(latestUpdateId));	      
 	            
 	            // Task queue implements the exponential backoff
-	            long jitter = (int) Math.random() * C2DM_MAX_JITTER_MSEC;
+	            long jitter = (int) Math.random() * C2DMSettings.MAX_JITTER_MSEC;
 	            url.countdownMillis(jitter);
 	            
 	            dmQueue.add(url);
