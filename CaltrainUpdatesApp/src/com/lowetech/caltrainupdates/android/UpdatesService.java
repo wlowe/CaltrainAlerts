@@ -11,19 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
@@ -37,7 +30,13 @@ public class UpdatesService extends IntentService
 	public static final String REFRESH_ACTION = "com.lowetech.caltrainupdates.android.refresh";
 	public static final String EXTRA_LATEST_AVAILABLE_TWEET = "latestServerTwitterId";
 	private static final String TAG = UpdatesService.class.getSimpleName();
-	private static final int ALERT_ID = 1;
+
+	
+	public static class UpdatesResult
+	{
+		int numUpdates;
+		String latestUpdateText;
+	}
 
 	public UpdatesService()
 	{
@@ -55,6 +54,8 @@ public class UpdatesService extends IntentService
 		
 		if (REFRESH_ACTION.equals(action))
 		{
+			UpdatesResult result = null;
+			
 			try
 			{
 				String latestIdStr = intent.getStringExtra(EXTRA_LATEST_AVAILABLE_TWEET);
@@ -65,45 +66,26 @@ public class UpdatesService extends IntentService
 					latestId = Long.parseLong(latestIdStr);
 				}
 				
-				int numUpdates = refreshUpdates(latestId);
+				result = refreshUpdates(latestId);
 				
-				if (numUpdates > 0)
-				{
-					
-					Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), Settings.System.DEFAULT_NOTIFICATION_URI);
-					ringtone.play();
-					
-					String ns = Context.NOTIFICATION_SERVICE;
-					NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-					//int icon = R.drawable.notification_icon;
-					int icon = android.R.drawable.stat_notify_call_mute;
-					CharSequence tickerText = "New Caltrain alerts";
-					long when = System.currentTimeMillis();
-	
-					Notification notification = new Notification(icon, tickerText, when);
-					notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
-					notification.flags |= Notification.FLAG_AUTO_CANCEL;
-					Context context = getApplicationContext();
-					CharSequence contentTitle = tickerText;
-					CharSequence contentText = "There are " + numUpdates + " Caltrain alerts available.";
-					Intent notificationIntent = new Intent(this, Main.class);
-					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-					notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-					mNotificationManager.notify(ALERT_ID, notification);
-	//				mNotificationManager.
-					
-					
-				}
+
 			}
 			finally
-			{
-				ServiceHelper.onServerEvent(ServiceHelper.REFRESH_FINISHED_EVENT, null);
+			{				
+				if (result != null && result.numUpdates > 0)
+				{
+					ServiceHelper.onNewUpdatesAvailable(result, getApplicationContext());
+				}
+				else
+				{
+					ServiceHelper.onServerEvent(ServiceHelper.REFRESH_FINISHED_EVENT, null);
+				}
 			}
 		}
 
 	}
 	
-	private int refreshUpdates(long latestAvailableId)
+	private UpdatesResult refreshUpdates(long latestAvailableId)
 	{
 		try
 		{
@@ -135,7 +117,7 @@ public class UpdatesService extends IntentService
 					
 						if (latestLocalId > latestAvailableId)
 						{
-							return 0;
+							return null;
 						}
 					}
 						
@@ -170,8 +152,10 @@ public class UpdatesService extends IntentService
 				}
 	
 				resolver.applyBatch(Constants.AUTHORITY, operationList);
-				
-				return size;
+				UpdatesResult result = new UpdatesResult();
+				result.numUpdates = size;
+				result.latestUpdateText = resultArray.getJSONObject(size - 1).optString("text");
+				return result;
 			}
 		}
 		catch (IOException ex)
@@ -191,7 +175,7 @@ public class UpdatesService extends IntentService
 			Log.e(TAG, "Error processing updates", ex);
 		}
 		
-		return 0;
+		return null;
 	}
 
 	

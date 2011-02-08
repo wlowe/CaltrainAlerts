@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 
-import com.google.android.c2dm.C2DMessaging;
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
 
 public class Main extends ListActivity implements ServerEventListener 
@@ -31,13 +30,24 @@ public class Main extends ListActivity implements ServerEventListener
             TrainUpdates.TEXT
     };
     
+    private static final String USER_REFRESH_STATE = "userRefreshState";
+    private boolean manualRefreshInProgress = false;
+    
     private Handler serverEventHandler = new Handler()
     {
     	public void handleMessage(android.os.Message msg)
     	{
     		if (msg.what == ServiceHelper.REFRESH_FINISHED_EVENT)
-    		{
-    			setSpinnerState(false);		
+    		{    			
+    			setSpinnerState(false);
+    			
+    			if (!manualRefreshInProgress)
+    			{
+	    			String message = "New Alerts available";
+	    			NotificationsHandler.showNotification(message, "Caltrain Alert", message, getApplicationContext(), 3000);
+    			}
+    			
+    			manualRefreshInProgress = false;
     		}
     	}
     };
@@ -54,8 +64,9 @@ public class Main extends ListActivity implements ServerEventListener
 			
 			public void onClick(View v)
 			{
-				ServiceHelper.fetchUpdates(getApplicationContext());				
-				setSpinnerState(true);				
+				manualRefreshInProgress = true;
+				setSpinnerState(true);
+				ServiceHelper.fetchUpdates(getApplicationContext());												
 			}
 		});
         
@@ -66,7 +77,9 @@ public class Main extends ListActivity implements ServerEventListener
 			
 			public void onClick(View v)
 			{
-				C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);				
+				
+				//C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
+				NotificationsHandler.showNotification("ticker", "title", "message", getApplicationContext(), 3000);
 			}
 		});
         
@@ -74,7 +87,7 @@ public class Main extends ListActivity implements ServerEventListener
         Intent intent = getIntent();
         intent.setData(TrainUpdates.CONTENT_URI);
         
-     // Perform a managed query. The Activity will handle closing and requerying the cursor
+        // Perform a managed query. The Activity will handle closing and requerying the cursor
         // when needed.
         Cursor cursor = managedQuery(intent.getData(), PROJECTION, null, null,
                 TrainUpdates.DEFAULT_SORT_ORDER);
@@ -82,25 +95,37 @@ public class Main extends ListActivity implements ServerEventListener
         // Used to map notes entries from the database to views
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, cursor,
                 new String[] { TrainUpdates.DATE, TrainUpdates.TEXT }, new int[] { android.R.id.text1, android.R.id.text2 });
-        setListAdapter(adapter);
-        
-    	
+        setListAdapter(adapter);	
     }
     
     @Override
-    protected void onStart()
-    { 
-    	super.onStart();    	
-    	ServiceHelper.addListener(this);
-    	boolean spinnerState = ServiceHelper.isEventPending(ServiceHelper.REFRESH_FINISHED_EVENT);
-    	setSpinnerState(spinnerState);
-    }
-    
-    @Override
-    protected void onStop()
+    protected void onResume()
     {
-    	super.onStop();    	
+    	super.onResume();
+    	ServiceHelper.addListener(this);
+    	setSpinnerState(manualRefreshInProgress);
+    }
+    
+    @Override
+    protected void onPause()
+    {
+    	super.onPause();
     	ServiceHelper.removeListener(this);
+    	setSpinnerState(false);
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {    
+    	super.onSaveInstanceState(outState);
+    	outState.putBoolean(USER_REFRESH_STATE, manualRefreshInProgress);
+    }
+    
+    @Override
+    protected void onRestoreInstanceState(Bundle state)
+    {
+    	super.onRestoreInstanceState(state);
+    	manualRefreshInProgress = state.getBoolean(USER_REFRESH_STATE);
     }
 
 	public void onServerEvent(int eventId, HashMap<String, Object> extras)

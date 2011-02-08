@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
@@ -29,17 +30,33 @@ public class C2DMReceiver extends C2DMBaseReceiver
 	@Override
 	protected void onMessage(Context context, Intent intent)
 	{
-		// TODO Auto-generated method stub
 		Log.i(TAG, "got C2DMessage");
 		
-		Log.i(TAG, "keys: " + intent.getExtras().keySet().toString());
-		String twitterId = intent.getExtras().getString("twitterId");
+		Bundle extras = intent.getExtras();
 		
-		if (twitterId != null)
-		{		
-			Intent serviceIntent = new Intent(UpdatesService.REFRESH_ACTION);
-			serviceIntent.putExtra("latestServerTwitterId", twitterId);
-			startService(serviceIntent);
+		String msgType = extras.getString("msgType");
+		
+		if (msgType.equals("notify"))
+		{
+			String twitterId = extras.getString("twitterId");
+			
+			if (twitterId != null)
+			{		
+				Intent serviceIntent = new Intent(UpdatesService.REFRESH_ACTION);
+				serviceIntent.putExtra("latestServerTwitterId", twitterId);
+				startService(serviceIntent);
+			}
+		}
+		else if (msgType.equals("ping"))
+		{
+			UpdatesService.UpdatesResult result = new UpdatesService.UpdatesResult();
+			result.numUpdates = 1;
+			result.latestUpdateText = extras.getString("message");
+			ServiceHelper.onNewUpdatesAvailable(result, getApplicationContext());
+		}
+		else
+		{
+			Log.e(TAG, "unknown message type: " + msgType);
 		}
 	}
 	

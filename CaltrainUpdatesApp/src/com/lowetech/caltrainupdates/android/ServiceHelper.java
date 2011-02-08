@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.lowetech.caltrainupdates.android.UpdatesService.UpdatesResult;
+
 /**
  * @author nopayne
  *
@@ -66,6 +68,32 @@ public class ServiceHelper
 				}
 				
 				//TODO: a way to cache events that occur when there's no listeners.
+			}
+			
+		}
+	}
+	
+	public static void onNewUpdatesAvailable(UpdatesResult result, Context context)
+	{
+		assert result != null && result.numUpdates > 0;
+		synchronized(eventListeners)
+		{
+			if (eventListeners.isEmpty())
+			{
+				String title = "Caltrain Alert";
+				if (result.numUpdates == 1)
+				{
+					NotificationsHandler.showNotification(result.latestUpdateText, title, result.latestUpdateText, context);
+				}
+				else
+				{
+					String message = result.numUpdates + " new alerts";
+					NotificationsHandler.showNotification(message, title, message, context);
+				}				
+			}
+			else
+			{
+				onServerEvent(REFRESH_FINISHED_EVENT, null);
 			}
 			
 		}
