@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -94,12 +95,14 @@ public class FetchUpdatesServlet extends HttpServlet
         	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
         	
         	List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();
+            Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
         	resp.getWriter().println("\n\nNew updates: ");
         	for (int i = 0; i < count; i++)
         	{
         		JSONObject currEntry = newEntries.getJSONObject(i);
         		long twitterId = currEntry.getLong("id");
         		String text = currEntry.getString("text");
+        		text = timeStampPattern.matcher(text).replaceFirst("");
         		String dateStr = currEntry.getString("created_at");
         		Date date = dateFormat.parse(dateStr);
         		TrainUpdate update = new TrainUpdate(twitterId, text, date);

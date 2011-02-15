@@ -44,7 +44,7 @@ public class UpdatesServlet extends HttpServlet
 			
 			for (TrainUpdate update : updates)
 			{
-				JSONObject updateJson = new JSONObject(update);
+				JSONObject updateJson = update.getJSON();
 				resultArray.put(updateJson);
 			}
 			
