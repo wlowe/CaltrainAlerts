@@ -144,7 +144,7 @@ public class FetchUpdatesServlet extends HttpServlet
 	{
 		long timeMillis = latestUpdateDate.getTime();
 		//String timeStr = timeMillis + "";
-		String collapseStr = Long.toString(timeMillis / C2DMSettings.COLLAPSE_FACTOR);
+		String collapseStr = Long.toString(timeMillis /*/ C2DMSettings.COLLAPSE_FACTOR*/);
 		
 		Extent<UpdateClient> extent = pm.getExtent(UpdateClient.class);
 		

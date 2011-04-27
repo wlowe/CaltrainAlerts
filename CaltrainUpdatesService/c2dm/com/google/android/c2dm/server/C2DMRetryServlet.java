@@ -63,8 +63,8 @@ public class C2DMRetryServlet extends HttpServlet {
         
         Map<String, String[]> params = req.getParameterMap();
         String collapse = req.getParameter(C2DMessaging.PARAM_COLLAPSE_KEY);
-        boolean delayWhenIdle = 
-            null != req.getParameter(C2DMessaging.PARAM_DELAY_WHILE_IDLE);
+        boolean delayWhenIdle = false; 
+            //null != req.getParameter(C2DMessaging.PARAM_DELAY_WHILE_IDLE);
 
         try {
             // Send doesn't retry !! 
