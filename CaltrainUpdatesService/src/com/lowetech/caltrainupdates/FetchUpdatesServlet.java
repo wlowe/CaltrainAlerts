@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,20 +40,11 @@ public class FetchUpdatesServlet extends HttpServlet
 		StringBuffer content = new StringBuffer();
 		String feedName = System.getProperty("com.lowetech.feed", "caltrain");
 		
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//TODO: must call close every time we use this.
+//		PersistenceManager pm = PMF.get().getPersistenceManager();
+				
+		long sinceId = TrainUpdatesStorage.getLatestUpdateId();
 		
-
-		Query query = pm.newQuery(TrainUpdate.class);
-		query.setOrdering("date DESC");
-		query.setRange(0,1);
-
-		List<TrainUpdate> oldUpdates = (List<TrainUpdate>)query.execute();
-		
-		long sinceId = -1;
-		if (oldUpdates.size() > 0)
-		{
-			sinceId = oldUpdates.get(0).getTwitterId();
-		}
 		
 		
 		try {
@@ -112,7 +102,8 @@ public class FetchUpdatesServlet extends HttpServlet
         		
         	}
         	
-        	pm.makePersistentAll(newUpdates);        	
+//        	pm.makePersistentAll(newUpdates);
+        	TrainUpdatesStorage.addUpdates(newUpdates);
     		
     		if (!newUpdates.isEmpty())
     		{
@@ -120,7 +111,7 @@ public class FetchUpdatesServlet extends HttpServlet
     			Date latestUpdateDate = latestUpdate.getDate();
     			long lastestUpdateId = latestUpdate.getTwitterId();
     			
-    			notifyClients(lastestUpdateId, latestUpdateDate, pm);
+    			notifyClients(lastestUpdateId, latestUpdateDate/*, pm*/);
     		}
 		}
 		catch (JSONException e)
@@ -135,24 +126,23 @@ public class FetchUpdatesServlet extends HttpServlet
 		}
 		finally
 		{
-			pm.close();
+			//pm.close();
 		}
 			
 	}
 
-	private void notifyClients(long latestUpdateId, Date latestUpdateDate, PersistenceManager pm) 
+	private void notifyClients(long latestUpdateId, Date latestUpdateDate/*, PersistenceManager pm*/) 
 	{
 		long timeMillis = latestUpdateDate.getTime();
 		//String timeStr = timeMillis + "";
 		String collapseStr = Long.toString(timeMillis /*/ C2DMSettings.COLLAPSE_FACTOR*/);
-		
-		Extent<UpdateClient> extent = pm.getExtent(UpdateClient.class);
-		
-		
 		com.google.appengine.api.taskqueue.Queue dmQueue = QueueFactory.getQueue("c2dm");
+		PersistenceManager pm = PMF.get().getPersistenceManager();		
+		Extent<UpdateClient> extent = null;						
 		
 		try
 		{
+			extent = pm.getExtent(UpdateClient.class);
 				
 			for (UpdateClient client : extent)
 			{
@@ -173,7 +163,12 @@ public class FetchUpdatesServlet extends HttpServlet
 		}
 		finally
 		{
-			extent.closeAll();
+			if (extent != null)
+			{
+				extent.closeAll();
+			}
+			
+			pm.close();
 		}
 		
 		
