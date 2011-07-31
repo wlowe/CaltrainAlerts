@@ -3,6 +3,7 @@
  */
 package com.lowetech.caltrainupdates;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -25,8 +26,13 @@ import com.google.appengine.repackaged.org.json.JSONObject;
  */
 
 @PersistenceCapable
-public class TrainUpdate
+public class TrainUpdate implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
