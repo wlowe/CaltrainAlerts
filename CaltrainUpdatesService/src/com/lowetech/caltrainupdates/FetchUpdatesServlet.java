@@ -1,17 +1,10 @@
 package com.lowetech.caltrainupdates;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -19,13 +12,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+
 import com.google.android.c2dm.server.C2DMRetryServlet;
 import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.repackaged.org.json.JSONArray;
-import com.google.appengine.repackaged.org.json.JSONException;
-import com.google.appengine.repackaged.org.json.JSONObject;
 
 @SuppressWarnings("serial")
 public class FetchUpdatesServlet extends HttpServlet 
@@ -37,73 +35,49 @@ public class FetchUpdatesServlet extends HttpServlet
 	{
 		resp.setContentType("text/plain");
 		resp.getWriter().println("Hello, world");
-		StringBuffer content = new StringBuffer();
+//		StringBuffer content = new StringBuffer();
 		String feedName = System.getProperty("com.lowetech.feed", "caltrain");
 		
 		//TODO: must call close every time we use this.
 //		PersistenceManager pm = PMF.get().getPersistenceManager();
 				
+
 		long sinceId = TrainUpdatesStorage.getLatestUpdateId();
 		
+		Twitter twitter = null;
 		
-		
-		try {
-			String urlStr = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + feedName + "&trim_user=1";
-			
-			if (sinceId >= 0)
-			{
-				urlStr += "&since_id=" + sinceId;
-			}
-            
-			URL url = new URL(urlStr);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-            
-
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
-            }
-            reader.close();
-            
-           // resp.getWriter().print(content.toString());
-            
-
-        } catch (MalformedURLException e) {
-            // ...
-        } catch (IOException e) {
-            // ...
-        }
-        
-        
-        
-        try
+		try
 		{
-        	//resp.getWriter().println("\n\n===============\n\n");
-        	JSONArray newEntries = new JSONArray(content.toString());
-        	//resp.getWriter().println(newEntries.toString());
-        	int count = newEntries.length();
-        	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-        	
-        	List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();
-            Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
+			AccessToken accessToken = TrainUpdatesStorage.getAccessToken();
+			twitter = new TwitterFactory().getInstance(accessToken);
+		}
+		catch (Exception e)
+		{
+			log.warning("Unable to authorize with Twitter");
+			twitter = new TwitterFactory().getInstance();
+		}
+		
+		Paging paging = new Paging(1, 200, sinceId);
+		
+		try
+		{
+			ResponseList<Status> statuses = twitter.getUserTimeline(feedName, paging);
+			List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();            
         	resp.getWriter().println("\n\nNew updates: ");
-        	for (int i = 0; i < count; i++)
-        	{
-        		JSONObject currEntry = newEntries.getJSONObject(i);
-        		long twitterId = currEntry.getLong("id");
-        		String text = currEntry.getString("text");
-        		text = timeStampPattern.matcher(text).replaceFirst("");
-        		String dateStr = currEntry.getString("created_at");
-        		Date date = dateFormat.parse(dateStr);
-        		TrainUpdate update = new TrainUpdate(twitterId, text, date);
+			
+			for (Status status : statuses)
+			{
+				long twitterId = status.getId();
+				String text = status.getText();
+				Date date = status.getCreatedAt();
+				
+				TrainUpdate update = new TrainUpdate(twitterId, text, date);
         		newUpdates.add(update);
         		log.info("Added update: " + update.toString());
         		resp.getWriter().println(update.toString());
-        		
-        	}
-        	
-//        	pm.makePersistentAll(newUpdates);
-        	TrainUpdatesStorage.addUpdates(newUpdates);
+			}
+			
+			TrainUpdatesStorage.addUpdates(newUpdates);
     		
     		if (!newUpdates.isEmpty())
     		{
@@ -113,21 +87,99 @@ public class FetchUpdatesServlet extends HttpServlet
     			
     			notifyClients(lastestUpdateId, latestUpdateDate/*, pm*/);
     		}
+			
 		}
-		catch (JSONException e)
+		catch (TwitterException e1)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-		catch (ParseException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally
-		{
-			//pm.close();
-		}
+		
+
+//		
+//		
+//		
+//		try {
+//			String urlStr = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + feedName + "&trim_user=1";
+//			
+//			if (sinceId >= 0)
+//			{
+//				urlStr += "&since_id=" + sinceId;
+//			}
+//            
+//			URL url = new URL(urlStr);
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+//            String line;
+//            
+//
+//            while ((line = reader.readLine()) != null) {
+//                content.append(line);
+//            }
+//            reader.close();
+//            
+//           // resp.getWriter().print(content.toString());
+//            
+//
+//        } catch (MalformedURLException e) {
+//            // ...
+//        } catch (IOException e) {
+//            // ...
+//        }
+//        
+        
+        
+//        try
+//		{
+//        	//resp.getWriter().println("\n\n===============\n\n");
+//        	JSONArray newEntries = new JSONArray(content.toString());
+//        	//resp.getWriter().println(newEntries.toString());
+//        	int count = newEntries.length();
+//        	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
+//        	
+//        	List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();
+//            Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
+//        	resp.getWriter().println("\n\nNew updates: ");
+//        	for (int i = 0; i < count; i++)
+//        	{
+//        		JSONObject currEntry = newEntries.getJSONObject(i);
+//        		long twitterId = currEntry.getLong("id");
+//        		String text = currEntry.getString("text");
+//        		text = timeStampPattern.matcher(text).replaceFirst("");
+//        		String dateStr = currEntry.getString("created_at");
+//        		Date date = dateFormat.parse(dateStr);
+//        		TrainUpdate update = new TrainUpdate(twitterId, text, date);
+//        		newUpdates.add(update);
+//        		log.info("Added update: " + update.toString());
+//        		resp.getWriter().println(update.toString());
+//        		
+//        	}
+//        	
+////        	pm.makePersistentAll(newUpdates);
+//        	TrainUpdatesStorage.addUpdates(newUpdates);
+//    		
+//    		if (!newUpdates.isEmpty())
+//    		{
+//    			TrainUpdate latestUpdate = newUpdates.get(newUpdates.size() - 1);
+//    			Date latestUpdateDate = latestUpdate.getDate();
+//    			long lastestUpdateId = latestUpdate.getTwitterId();
+//    			
+//    			notifyClients(lastestUpdateId, latestUpdateDate/*, pm*/);
+//    		}
+//		}
+//		catch (JSONException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		catch (ParseException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		finally
+//		{
+//			//pm.close();
+//		}
 			
 	}
 

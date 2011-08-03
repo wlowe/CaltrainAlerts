@@ -5,15 +5,18 @@ package com.lowetech.caltrainupdates;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheManager;
+import twitter4j.auth.AccessToken;
 
 import com.google.appengine.api.datastore.DatastoreTimeoutException;
 import com.google.appengine.repackaged.org.json.JSONArray;
@@ -30,6 +33,7 @@ public class TrainUpdatesStorage
 {
 	private static Cache cache;
 	private static String CACHED_UPDATES_KEY = "CachedUpdates";
+	private static String ACCESS_TOKEN_KEY = "AccessToken";
 	
 	private static final Logger log = Logger.getLogger(TrainUpdatesStorage.class.getName());
 	
@@ -168,5 +172,64 @@ public class TrainUpdatesStorage
 		}
 		
 		return resultArray.toString();
+	}
+	
+	public static void setAccessToken(AccessToken accessToken)
+	{
+		StoredAccessToken storedToken = new StoredAccessToken(accessToken);
+
+		// Add the token to the cache.
+		cache.put(ACCESS_TOKEN_KEY, storedToken);
+		
+		// Now persist it from the datastore
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query delQuery = pm.newQuery(StoredAccessToken.class);
+		
+		try
+		{
+			delQuery.deletePersistentAll();
+			pm.makePersistent(storedToken);
+		}
+		finally
+		{
+			delQuery.closeAll();
+			pm.close();
+		}				
+	}
+	
+	public static AccessToken getAccessToken()
+	{
+		// Try to grab the token from the cache.
+		StoredAccessToken storedToken = (StoredAccessToken)cache.get(ACCESS_TOKEN_KEY);
+		
+		if (storedToken != null)
+		{
+			return storedToken.getAccessToken();
+		}
+		
+		// Now try to grab it from the datastore
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Extent<StoredAccessToken> extent = pm.getExtent(StoredAccessToken.class, false);
+		
+		try
+		{
+			Iterator<StoredAccessToken> itr = extent.iterator();
+			storedToken = itr.next();
+			
+			// If the token was found, cache it and return.
+			if (storedToken != null)
+			{
+				cache.put(ACCESS_TOKEN_KEY, storedToken);
+				return storedToken.getAccessToken();
+			}
+		}
+		finally
+		{
+			extent.closeAll();
+			pm.close();
+		}
+		
+		return null;
+		
 	}
 }
