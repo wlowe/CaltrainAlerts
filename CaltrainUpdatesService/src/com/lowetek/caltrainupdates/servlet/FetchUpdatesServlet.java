@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +24,11 @@ import com.google.android.c2dm.server.C2DMRetryServlet;
 import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import com.lowetek.caltrainupdates.data.C2DMSettings;
+import com.lowetek.caltrainupdates.data.DataStorage;
+import com.lowetek.caltrainupdates.data.PMF;
+import com.lowetek.caltrainupdates.data.TrainUpdate;
+import com.lowetek.caltrainupdates.data.UpdateClient;
 
 @SuppressWarnings("serial")
 public class FetchUpdatesServlet extends HttpServlet 
@@ -42,13 +47,13 @@ public class FetchUpdatesServlet extends HttpServlet
 //		PersistenceManager pm = PMF.get().getPersistenceManager();
 				
 
-		long sinceId = TrainUpdatesStorage.getLatestUpdateId();
+		long sinceId = DataStorage.getLatestUpdateId();
 		
 		Twitter twitter = null;
 		
 		try
 		{
-			AccessToken accessToken = TrainUpdatesStorage.getAccessToken();
+			AccessToken accessToken = DataStorage.getAccessToken();
 			twitter = new TwitterFactory().getInstance(accessToken);
 		}
 		catch (Exception e)
@@ -77,7 +82,7 @@ public class FetchUpdatesServlet extends HttpServlet
         		resp.getWriter().println(update.toString());
 			}
 			
-			TrainUpdatesStorage.addUpdates(newUpdates);
+			DataStorage.addUpdates(newUpdates);
     		
     		if (!newUpdates.isEmpty())
     		{
@@ -155,7 +160,7 @@ public class FetchUpdatesServlet extends HttpServlet
 //        	}
 //        	
 ////        	pm.makePersistentAll(newUpdates);
-//        	TrainUpdatesStorage.addUpdates(newUpdates);
+//        	DataStorage.addUpdates(newUpdates);
 //    		
 //    		if (!newUpdates.isEmpty())
 //    		{

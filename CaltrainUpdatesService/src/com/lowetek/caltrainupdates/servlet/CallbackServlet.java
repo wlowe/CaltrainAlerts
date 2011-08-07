@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
 
@@ -16,6 +16,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
 import com.google.appengine.api.datastore.DatastoreTimeoutException;
+import com.lowetek.caltrainupdates.data.DataStorage;
 
 /**
  * @author nopayne
@@ -39,7 +40,7 @@ public class CallbackServlet extends HttpServlet
 		try
 		{
 			AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
-			TrainUpdatesStorage.setAccessToken(accessToken);
+			DataStorage.setAccessToken(accessToken);
 			req.getSession().removeAttribute("requestToken");
 		}
 		catch (TwitterException e)

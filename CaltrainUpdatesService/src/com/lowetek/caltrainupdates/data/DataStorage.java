@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,13 +29,13 @@ import com.google.appengine.repackaged.org.json.JSONObject;
  * @author nopayne
  *
  */
-public class TrainUpdatesStorage
+public class DataStorage
 {
 	private static Cache cache;
 	private static String CACHED_UPDATES_KEY = "CachedUpdates";
 	private static String ACCESS_TOKEN_KEY = "AccessToken";
 	
-	private static final Logger log = Logger.getLogger(TrainUpdatesStorage.class.getName());
+	private static final Logger log = Logger.getLogger(DataStorage.class.getName());
 	
 	static
 	{

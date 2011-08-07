@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.data;
 
 import java.util.Date;
 

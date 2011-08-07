@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
 import java.util.logging.Logger;

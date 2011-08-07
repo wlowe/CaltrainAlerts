@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.lowetech.caltrainupdates.PMF;
-import com.lowetech.caltrainupdates.TrainUpdate;
+import com.lowetek.caltrainupdates.data.PMF;
+import com.lowetek.caltrainupdates.data.TrainUpdate;
 
 /**
  * 

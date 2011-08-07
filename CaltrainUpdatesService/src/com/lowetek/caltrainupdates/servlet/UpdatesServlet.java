@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
 
@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.lowetek.caltrainupdates.data.DataStorage;
 
 @SuppressWarnings("serial")
 public class UpdatesServlet extends HttpServlet 
@@ -23,7 +25,7 @@ public class UpdatesServlet extends HttpServlet
 		}
 		
 		resp.setContentType("application/json");
-		String responseContent = TrainUpdatesStorage.getUpdatesSince(sinceId);
+		String responseContent = DataStorage.getUpdatesSince(sinceId);
 		resp.getWriter().println(responseContent);
 
 	}

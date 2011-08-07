@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
+import com.lowetek.caltrainupdates.data.PMF;
+import com.lowetek.caltrainupdates.data.TrainUpdate;
 
 @SuppressWarnings("serial")
 public class JebcorScratchServlet extends HttpServlet

@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -12,6 +12,7 @@ import com.google.android.c2dm.server.C2DMRetryServlet;
 import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import com.lowetek.caltrainupdates.data.C2DMSettings;
 
 public class PingClientServlet extends HttpServlet
 {

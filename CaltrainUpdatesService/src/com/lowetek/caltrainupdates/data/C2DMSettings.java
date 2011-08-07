@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates;
+package com.lowetek.caltrainupdates.data;
 
 /**
  * @author nopayne
