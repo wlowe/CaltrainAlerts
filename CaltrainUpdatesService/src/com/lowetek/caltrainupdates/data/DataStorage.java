@@ -52,7 +52,8 @@ public class DataStorage
 	
 	public static long getLatestUpdateId()
 	{
-		
+		//TODO:  We should store the latest ID instead of querying for it.
+		// That way we don't run into a situation where the data store gets cleared and we end up pulling 200 updates.
 
 		// Attempt to just pull the value out of the cache.
 		// We assume that the latest updates will always live here.

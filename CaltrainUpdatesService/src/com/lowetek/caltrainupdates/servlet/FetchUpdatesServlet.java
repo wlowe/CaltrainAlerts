@@ -47,7 +47,7 @@ public class FetchUpdatesServlet extends HttpServlet
 //		PersistenceManager pm = PMF.get().getPersistenceManager();
 				
 
-		long sinceId = DataStorage.getLatestUpdateId();
+		
 		
 		Twitter twitter = null;
 		
@@ -62,7 +62,17 @@ public class FetchUpdatesServlet extends HttpServlet
 			twitter = new TwitterFactory().getInstance();
 		}
 		
-		Paging paging = new Paging(1, 200, sinceId);
+		long sinceId = DataStorage.getLatestUpdateId();
+		Paging paging = null;
+		
+		if (sinceId >= 0)
+		{
+			paging = new Paging(1, 200, sinceId);
+		}
+		else
+		{
+			paging = new Paging(1, 200);
+		}
 		
 		try
 		{
