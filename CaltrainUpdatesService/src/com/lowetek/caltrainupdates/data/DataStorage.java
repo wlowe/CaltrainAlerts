@@ -5,8 +5,10 @@ package com.lowetek.caltrainupdates.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.jdo.Extent;
@@ -32,8 +34,9 @@ import com.google.appengine.repackaged.org.json.JSONObject;
 public class DataStorage
 {
 	private static Cache cache;
-	private static String CACHED_UPDATES_KEY = "CachedUpdates";
-	private static String ACCESS_TOKEN_KEY = "AccessToken";
+	private static final String CACHED_UPDATES_KEY = "CachedUpdates";
+	private static final String ACCESS_TOKEN_KEY = "AccessToken";
+	private static final String CACHED_QUERIES_KEY = "CachedQueries";
 	
 	private static final Logger log = Logger.getLogger(DataStorage.class.getName());
 	
@@ -119,6 +122,7 @@ public class DataStorage
 		}
 		finally
 		{
+			cache.remove(CACHED_QUERIES_KEY);
 			cache.put(CACHED_UPDATES_KEY, cachedUpdates);
 			log.info("Updated cache to size of : " + cachedUpdates.size());
 			pm.close();
@@ -127,6 +131,22 @@ public class DataStorage
 	
 	public static String getUpdatesSince(long sinceId)
 	{
+		// First try to pull the response from the cache.
+		@SuppressWarnings("unchecked")
+		Map<Long, String> cachedQueries = (Map<Long, String>)cache.get(CACHED_QUERIES_KEY);
+		Long sinceIdObj = Long.valueOf(sinceId);
+		
+		if (cachedQueries == null)
+		{
+			cachedQueries = new HashMap<Long, String>();
+		}		
+		else if (cachedQueries.containsKey(sinceIdObj))
+		{
+			log.info("Found query in the cache: " + sinceId);
+			return cachedQueries.get(sinceIdObj);
+		}	
+				
+		// If we haven't cached this response, we must query for it.
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		JSONArray resultArray = new JSONArray();
 		
@@ -172,7 +192,11 @@ public class DataStorage
 			pm.close();
 		}
 		
-		return resultArray.toString();
+		String result = resultArray.toString();
+		cachedQueries.put(sinceIdObj, result);
+		cache.put(CACHED_QUERIES_KEY, cachedQueries);
+		
+		return result;
 	}
 	
 	public static void setAccessToken(AccessToken accessToken)
