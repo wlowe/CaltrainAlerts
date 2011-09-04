@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -34,17 +36,13 @@ import com.lowetek.caltrainupdates.data.UpdateClient;
 public class FetchUpdatesServlet extends HttpServlet 
 {
 	private static final Logger log = Logger.getLogger(FetchUpdatesServlet.class.getName());
+	private static final Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
 
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, world");
-//		StringBuffer content = new StringBuffer();
 		String feedName = System.getProperty("com.lowetech.feed", "caltrain");
-		
-		//TODO: must call close every time we use this.
-//		PersistenceManager pm = PMF.get().getPersistenceManager();
 				
 
 		
@@ -63,6 +61,7 @@ public class FetchUpdatesServlet extends HttpServlet
 		}
 		
 		long sinceId = DataStorage.getLatestUpdateId();
+
 		Paging paging = null;
 		
 		if (sinceId >= 0)
@@ -83,7 +82,7 @@ public class FetchUpdatesServlet extends HttpServlet
 			for (Status status : statuses)
 			{
 				long twitterId = status.getId();
-				String text = status.getText();
+				String text = timeStampPattern.matcher(status.getText()).replaceFirst("");
 				Date date = status.getCreatedAt();
 				
 				TrainUpdate update = new TrainUpdate(twitterId, text, date);
@@ -100,14 +99,13 @@ public class FetchUpdatesServlet extends HttpServlet
     			Date latestUpdateDate = latestUpdate.getDate();
     			long lastestUpdateId = latestUpdate.getTwitterId();
     			
-    			notifyClients(lastestUpdateId, latestUpdateDate/*, pm*/);
+    			notifyClients(lastestUpdateId, latestUpdateDate);
     		}
 			
 		}
 		catch (TwitterException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			log.log(Level.WARNING, "Error getting tweets", e1);
 		}
 		
 

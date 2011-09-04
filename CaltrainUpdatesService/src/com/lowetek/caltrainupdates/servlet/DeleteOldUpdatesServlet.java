@@ -2,7 +2,6 @@ package com.lowetek.caltrainupdates.servlet;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -44,21 +43,9 @@ public class DeleteOldUpdatesServlet extends HttpServlet
 			Date cutOff = cal.getTime();
 			query.setFilter("date <= :date");
 			
-			log.info("Deleting older than: " + cutOff.toString());
-			List<TrainUpdate> deletedUpdates = (List<TrainUpdate>)query.execute(cutOff);
-			long numDeleted = deletedUpdates.size();
-			
-			for (TrainUpdate update : deletedUpdates)
-			{
-				log.info("Will delete" + update.toString());
-			}
-			
-			//TODO: delete using this method
-			//long numDeleted = query.deletePersistentAll(cutOff);
-			
+			log.info("Deleting updates older than: " + cutOff.toString());
+			long numDeleted = query.deletePersistentAll(cutOff);			
 			log.info("Deleted " + numDeleted + " stale updates");
-			
-			pm.deletePersistentAll(deletedUpdates);
 		}
 		finally
 		{
