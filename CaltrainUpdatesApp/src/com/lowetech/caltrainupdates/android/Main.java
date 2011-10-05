@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 
+import com.google.android.c2dm.C2DMessaging;
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
 
 public class Main extends ListActivity implements ServerEventListener 
@@ -96,6 +97,11 @@ public class Main extends ListActivity implements ServerEventListener
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, cursor,
                 new String[] { TrainUpdates.DATE, TrainUpdates.TEXT }, new int[] { android.R.id.text1, android.R.id.text2 });
         setListAdapter(adapter);	
+        
+        if (C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
+        {
+        	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
+        }
     }
     
     @Override
