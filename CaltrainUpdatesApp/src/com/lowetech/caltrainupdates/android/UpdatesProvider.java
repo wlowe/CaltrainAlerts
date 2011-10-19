@@ -53,7 +53,7 @@ public class UpdatesProvider extends ContentProvider
 						
 			db.execSQL("CREATE TRIGGER insert_deleteOldUpdates AFTER  INSERT ON " + UPDATES_TABLE_NAME + " \n" +
 		         "BEGIN \n" +
-		         " DELETE FROM " + UPDATES_TABLE_NAME + " WHERE _id = (new._id - 100); \n" +
+		         " DELETE FROM " + UPDATES_TABLE_NAME + " WHERE _id = (new._id - 50); \n" +
 		         "END;");
 		}
 

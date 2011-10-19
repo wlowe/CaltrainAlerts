@@ -94,8 +94,12 @@ public class Main extends ListActivity implements ServerEventListener
                 TrainUpdates.DEFAULT_SORT_ORDER);
 
         // Used to map notes entries from the database to views
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, cursor,
-                new String[] { TrainUpdates.DATE, TrainUpdates.TEXT }, new int[] { android.R.id.text1, android.R.id.text2 });
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        		this, 
+        		R.layout.two_line_list_item, 
+        		cursor,
+                new String[] { TrainUpdates.DATE, TrainUpdates.TEXT }, 
+                new int[] { R.id.date, R.id.updateText });
         setListAdapter(adapter);	
         
         if (C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
