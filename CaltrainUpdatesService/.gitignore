@@ -19,3 +19,4 @@ war/WEB-INF/classes
 war/WEB-INF/lib
 war/WEB-INF/dataMessagingToken.txt
 war/WEB-INF/appengine-generated
+war/WEB-INF/twitter4j.properties
