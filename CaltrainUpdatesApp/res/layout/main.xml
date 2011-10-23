@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <LinearLayout
+    <LinearLayout 
     	android:orientation="horizontal"
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
@@ -35,17 +35,24 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:text="error" />
+	
+	<fragment android:name="com.lowetech.caltrainupdates.android.AlertsListFragment"
+	    android:id="@+id/list"
+	    android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+	    
 
- 	<ListView android:id="@id/android:list"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_weight="1"
-		android:drawSelectorOnTop="false"/>
+<!--  	<ListView android:id="@id/android:list" -->
+<!-- 		android:layout_width="match_parent" -->
+<!-- 		android:layout_height="match_parent" -->
+<!-- 		android:layout_weight="1" -->
+<!-- 		android:drawSelectorOnTop="false"/> -->
                
-	<TextView android:id="@id/android:empty"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:text="No data"/>
+<!-- 	<TextView android:id="@id/android:empty" -->
+<!-- 		android:layout_width="match_parent" -->
+<!-- 		android:layout_height="match_parent" -->
+<!-- 		android:text="No data"/> -->
                
 
 </LinearLayout>
