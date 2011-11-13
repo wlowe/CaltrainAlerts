@@ -34,12 +34,12 @@ public class DeleteOldUpdatesServlet extends HttpServlet
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try
 		{
-			
+			// TODO: This should really use the DataStorage class + clear the cache
 			Query query = pm.newQuery(TrainUpdate.class);
 			
 			Calendar cal = Calendar.getInstance();
 			log.info("Curr date" + cal.getTime().toString());
-			cal.add(Calendar.DAY_OF_YEAR, -1);
+			cal.add(Calendar.DAY_OF_YEAR, -7);
 			Date cutOff = cal.getTime();
 			query.setFilter("date <= :date");
 			

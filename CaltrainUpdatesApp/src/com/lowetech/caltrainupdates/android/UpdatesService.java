@@ -4,19 +4,16 @@
 package com.lowetech.caltrainupdates.android;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
-import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
@@ -138,20 +135,31 @@ public class UpdatesService extends IntentService
 			
 			if (size > 0)
 			{
-				ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
-	            ContentProviderOperation.Builder builder;
+//				ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
+//	            ContentProviderOperation.Builder builder;
+				ContentValues[] values = new ContentValues[size];
 				
 				for (int i = 0; i < size; i++)
 				{
 					currObject = resultArray.getJSONObject(i);
-					builder = ContentProviderOperation.newInsert(Constants.TrainUpdates.CONTENT_URI);
-					builder.withValue(TrainUpdates.DATE, currObject.opt("date"));
-					builder.withValue(TrainUpdates.TEXT, currObject.opt("text"));
-					builder.withValue(TrainUpdates.TWITTER_ID, currObject.opt("twitterId"));
-					operationList.add(builder.build());
+					values[i] = new ContentValues();
+					values[i].put(TrainUpdates.DATE, (Integer)currObject.opt("date"));
+					values[i].put(TrainUpdates.TEXT, (String)currObject.opt("text"));
+					values[i].put(TrainUpdates.TWITTER_ID, (Long)currObject.opt("twitterId"));
+					
+					
+//					currObject = resultArray.getJSONObject(i);
+//					builder = ContentProviderOperation.newInsert(Constants.TrainUpdates.CONTENT_URI);
+//					builder.withValue(TrainUpdates.DATE, currObject.opt("date"));
+//					builder.withValue(TrainUpdates.TEXT, currObject.opt("text"));
+//					builder.withValue(TrainUpdates.TWITTER_ID, currObject.opt("twitterId"));
+//					operationList.add(builder.build());
+					
+					
 				}
 	
-				resolver.applyBatch(Constants.AUTHORITY, operationList);
+//				resolver.applyBatch(Constants.AUTHORITY, operationList);
+				resolver.bulkInsert(Constants.TrainUpdates.CONTENT_URI, values);
 				UpdatesResult result = new UpdatesResult();
 				result.numUpdates = size;
 				result.latestUpdateText = resultArray.getJSONObject(size - 1).optString("text");
@@ -166,14 +174,14 @@ public class UpdatesService extends IntentService
 		{
 			Log.e(TAG, "Error parsing updates", ex);
 		}
-		catch (RemoteException ex)
-		{
-			Log.e(TAG, "Error processing updates", ex);
-		}
-		catch (OperationApplicationException ex)
-		{
-			Log.e(TAG, "Error processing updates", ex);
-		}
+//		catch (RemoteException ex)
+//		{
+//			Log.e(TAG, "Error processing updates", ex);
+//		}
+//		catch (OperationApplicationException ex)
+//		{
+//			Log.e(TAG, "Error processing updates", ex);
+//		}
 		
 		return null;
 	}

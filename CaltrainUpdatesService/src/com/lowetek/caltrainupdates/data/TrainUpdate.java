@@ -91,7 +91,7 @@ public class TrainUpdate implements Serializable
 		{
 			result.put("text", text);
 			result.put("twitterId", twitterId);
-			result.put("date", getPrettyDate());
+			result.put("date", date.getTime() / 1000); // Get the UNIX time
 		}
 		catch (JSONException e)
 		{

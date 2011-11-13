@@ -32,7 +32,7 @@ public class NotificationsHandler
 	
 	static
 	{
-		notification.icon = android.R.drawable.stat_notify_call_mute;
+		notification.icon = R.drawable.ic_notify_alert;
 		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	}

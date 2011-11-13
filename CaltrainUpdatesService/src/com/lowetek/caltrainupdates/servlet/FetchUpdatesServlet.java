@@ -60,7 +60,7 @@ public class FetchUpdatesServlet extends HttpServlet
 			twitter = new TwitterFactory().getInstance();
 		}
 		
-		long sinceId = DataStorage.getLatestUpdateId();
+		long sinceId = DataStorage.getLatestUpdateId();		
 
 		Paging paging = null;
 		

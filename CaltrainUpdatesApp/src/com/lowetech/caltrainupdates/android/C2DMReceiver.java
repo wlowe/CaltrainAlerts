@@ -30,14 +30,16 @@ public class C2DMReceiver extends C2DMBaseReceiver
 	@Override
 	protected void onMessage(Context context, Intent intent)
 	{
-		Log.i(TAG, "got C2DMessage");
+		
 		
 		Bundle extras = intent.getExtras();
 		
 		String msgType = extras.getString("msgType");
 		
+		Log.i(TAG, "got C2DMessage " + msgType);
+		
 		if (msgType.equals("notify"))
-		{
+		{			
 			String twitterId = extras.getString("twitterId");
 			
 			if (twitterId != null)

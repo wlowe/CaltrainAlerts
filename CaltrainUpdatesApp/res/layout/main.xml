@@ -4,11 +4,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <LinearLayout
+    <LinearLayout 
     	android:orientation="horizontal"
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:gravity="right"
+    	android:visibility="gone"
     	>
 		<ImageButton 
 			android:src="@drawable/refresh"
@@ -35,17 +36,26 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:text="error" />
+	
+	<fragment
+	    android:id="@+id/list"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_weight="1"
+	    android:name="com.lowetech.caltrainupdates.android.AlertsListFragment" >
+	    <!-- Preview: layout=@layout/alerts_list -->
+	</fragment>
 
- 	<ListView android:id="@id/android:list"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_weight="1"
-		android:drawSelectorOnTop="false"/>
+<!--  	<ListView android:id="@id/android:list" -->
+<!-- 		android:layout_width="match_parent" -->
+<!-- 		android:layout_height="match_parent" -->
+<!-- 		android:layout_weight="1" -->
+<!-- 		android:drawSelectorOnTop="false"/> -->
                
-	<TextView android:id="@id/android:empty"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:text="No data"/>
+<!-- 	<TextView android:id="@id/android:empty" -->
+<!-- 		android:layout_width="match_parent" -->
+<!-- 		android:layout_height="match_parent" -->
+<!-- 		android:text="No data"/> -->
                
 
 </LinearLayout>
