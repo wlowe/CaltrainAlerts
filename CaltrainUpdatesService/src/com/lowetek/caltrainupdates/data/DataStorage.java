@@ -37,6 +37,7 @@ public class DataStorage
 	private static final String CACHED_UPDATES_KEY = "CachedUpdates";
 	private static final String ACCESS_TOKEN_KEY = "AccessToken";
 	private static final String CACHED_QUERIES_KEY = "CachedQueries";
+	private static final String STORAGE_STATS_KEY = "StorageStats";
 	
 	private static final Logger log = Logger.getLogger(DataStorage.class.getName());
 	
@@ -55,6 +56,16 @@ public class DataStorage
 	
 	public static long getLatestUpdateId()
 	{
+		StorageStats stats = getStorageStats();
+		
+		if (stats != null)
+		{
+			return stats.getLatestUpdateId();
+		}
+		
+		//TODO: will stats ever be null?
+		
+		
 		//TODO:  We should store the latest ID instead of querying for it.
 		// That way we don't run into a situation where the data store gets cleared and we end up pulling 200 updates.
 
@@ -98,6 +109,11 @@ public class DataStorage
 	
 	public static void addUpdates(List<TrainUpdate> newUpdates)
 	{
+		if (newUpdates.isEmpty())
+		{
+			return;
+		}
+		
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		@SuppressWarnings("unchecked")
 		List<TrainUpdate> cachedUpdates = (List<TrainUpdate>)cache.get(CACHED_UPDATES_KEY);
@@ -110,9 +126,13 @@ public class DataStorage
 		log.info("Fetched cache with size of : " + cachedUpdates.size());
 		cachedUpdates.addAll(newUpdates);
 		
+		StorageStats stats = getStorageStats();
+		stats.setLatestUpdateId(newUpdates.get(0).getTwitterId());
+		
 		try
 		{			
 			pm.makePersistentAll(cachedUpdates);
+			pm.makePersistent(stats);
 			cachedUpdates.clear();
 			log.info("Cache cleared");
 		}
@@ -124,6 +144,7 @@ public class DataStorage
 		{
 			cache.remove(CACHED_QUERIES_KEY);
 			cache.put(CACHED_UPDATES_KEY, cachedUpdates);
+			cache.put(STORAGE_STATS_KEY, stats);
 			log.info("Updated cache to size of : " + cachedUpdates.size());
 			pm.close();
 		}
@@ -256,5 +277,44 @@ public class DataStorage
 		
 		return null;
 		
+	}
+	
+	public static StorageStats getStorageStats()
+	{
+		// Try to grab the token from the cache.
+		StorageStats stats = (StorageStats)cache.get(STORAGE_STATS_KEY);
+		
+		if (stats != null)
+		{
+			return stats;
+		}
+		
+		// Now try to grab it from the datastore
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Extent<StorageStats> extent = pm.getExtent(StorageStats.class, false);
+		
+		try
+		{
+			Iterator<StorageStats> itr = extent.iterator();
+			
+			if (itr.hasNext())
+			{
+				stats = itr.next();
+			}			
+			else
+			{
+				stats = new StorageStats();
+				pm.makePersistent(stats);
+			}									
+			
+			return stats;
+		}
+		finally
+		{
+			extent.closeAll();
+			pm.close();
+			
+			cache.put(STORAGE_STATS_KEY, stats);
+		}				
 	}
 }

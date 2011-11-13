@@ -3,13 +3,15 @@
  */
 package com.lowetech.caltrainupdates.android;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -27,11 +29,13 @@ public class UpdatesProvider extends ContentProvider
 {
 	private static final String TAG = "UpdatesProvider";
 	private static final String DATABASE_NAME = "caltrain_updates.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 5;
 	private static final String UPDATES_TABLE_NAME = "updates";
 	
 	private static final int UPDATE = 1;
 	private static final int UPDATE_ID = 2;
+	
+	private static final int SECONDS_PER_DAY = 86400;
 	
 	private static final UriMatcher sUriMatcher;
 	
@@ -48,12 +52,13 @@ public class UpdatesProvider extends ContentProvider
 			db.execSQL("CREATE TABLE " + UPDATES_TABLE_NAME + " (" 
 					+ TrainUpdates._ID + " INTEGER PRIMARY KEY," 
 					+ TrainUpdates.TEXT + " TEXT," 
-					+ TrainUpdates.DATE + " TEXT," 
+					+ TrainUpdates.DATE + " INTEGER,"
+					+ TrainUpdates.DATE_HEADER + " INTEGER, "
 					+ TrainUpdates.TWITTER_ID + " INTEGER" + ");");
 						
 			db.execSQL("CREATE TRIGGER insert_deleteOldUpdates AFTER  INSERT ON " + UPDATES_TABLE_NAME + " \n" +
 		         "BEGIN \n" +
-		         " DELETE FROM " + UPDATES_TABLE_NAME + " WHERE _id = (new._id - 50); \n" +
+		         " DELETE FROM " + UPDATES_TABLE_NAME + " WHERE _id = (new._id - 100); \n" +
 		         "END;");
 		}
 
@@ -123,37 +128,127 @@ public class UpdatesProvider extends ContentProvider
 		}
 	}
 
+	//TODO: single insert may be dead code.  consider removing.
 	/* (non-Javadoc)
 	 * @see android.content.ContentProvider#insert(android.net.Uri, android.content.ContentValues)
 	 */
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues)
 	{
+		throw new UnsupportedOperationException("no single insert!");
+//		 // Validate the requested uri
+//        if (sUriMatcher.match(uri) != UPDATE) {
+//            throw new IllegalArgumentException("Unknown URI " + uri);
+//        }
+//
+//        ContentValues values;
+//        if (initialValues != null) {
+//            values = new ContentValues(initialValues);
+//        } else {
+//            values = new ContentValues();
+//        }
+//
+//       //TODO: validate col data
+//
+//       
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        long rowId = db.insert(UPDATES_TABLE_NAME, TrainUpdates.TEXT, values);
+//        
+//        if (rowId > 0) {
+//            Uri updateUri = ContentUris.withAppendedId(TrainUpdates.CONTENT_URI, rowId);
+//            getContext().getContentResolver().notifyChange(updateUri, null);
+//            return updateUri;
+//        }
+//
+//        throw new SQLException("Failed to insert row into " + uri);
+	}
+	
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values)
+	{
 		 // Validate the requested uri
-        if (sUriMatcher.match(uri) != UPDATE) {
+        if (sUriMatcher.match(uri) != UPDATE) 
+        {
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
-
-        ContentValues values;
-        if (initialValues != null) {
-            values = new ContentValues(initialValues);
-        } else {
-            values = new ContentValues();
-        }
-
-       //TODO: validate col data
-
-       
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(UPDATES_TABLE_NAME, TrainUpdates.TEXT, values);
         
-        if (rowId > 0) {
-            Uri updateUri = ContentUris.withAppendedId(TrainUpdates.CONTENT_URI, rowId);
-            getContext().getContentResolver().notifyChange(updateUri, null);
-            return updateUri;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DatabaseUtils.InsertHelper inserter = new DatabaseUtils.InsertHelper(db, UPDATES_TABLE_NAME);
+        int numRows = 0;
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Long dayStart = cal.getTimeInMillis() / 1000;
+        Long nextDayStart = dayStart + SECONDS_PER_DAY;
+        
+        db.beginTransaction();
+        
+        try
+        {
+        	for (ContentValues value : values)
+        	{
+        		inserter.insert(value);
+        		numRows++;
+        	}
+        	
+        	ContentValues newHeaderVals = new ContentValues();
+        	newHeaderVals.put(TrainUpdates.DATE_HEADER, 0);
+        	db.update(UPDATES_TABLE_NAME, newHeaderVals, null, null);
+        	
+        	newHeaderVals.put(TrainUpdates.DATE_HEADER, 1);
+//        	int numUpdated = 0;
+        	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        	builder.setTables(UPDATES_TABLE_NAME);
+        	String headerQuery = "SELECT " + TrainUpdates.TWITTER_ID + " FROM " + UPDATES_TABLE_NAME + " WHERE " + TrainUpdates.DATE + " >= ? AND " + TrainUpdates.DATE + " < ? ORDER BY " + TrainUpdates.TWITTER_ID + " DESC LIMIT 1";//builder.buildQuery(new String[] {TrainUpdates.TWITTER_ID}, TrainUpdates.DATE + " >= ?", null, null, "ASC", "LMIT 1");
+        	long lastId = -1;
+        	long currId = -1;
+        	
+//        	do
+        	for (int i = 0; i < 7; i++)
+        	{
+        		lastId = currId;
+        		Cursor c = db.rawQuery(headerQuery, new String[] {dayStart.toString(), nextDayStart.toString()});
+        		try
+        		{
+        			if (c.getCount() > 0)
+        			{
+		        		c.moveToFirst();
+		        		
+		        		currId = c.getLong(0);
+		        		Log.i(TAG, "Found header: " + currId);
+		        		db.update(UPDATES_TABLE_NAME, newHeaderVals, TrainUpdates.TWITTER_ID + " = " + currId, null);
+        			}
+        		}
+        		finally
+        		{
+        			c.close();
+        		}
+        		
+        		nextDayStart = dayStart;
+        		dayStart = dayStart - SECONDS_PER_DAY; // Subtract one day.
+        		
+        		
+        	}
+//        	} while (lastId != currId);
+        	
+        	
+        	//TODO: additional stuff here to update headers.
+        	db.setTransactionSuccessful();
         }
-
-        throw new SQLException("Failed to insert row into " + uri);
+        finally
+        {
+        	db.endTransaction();
+        	inserter.close();
+        }
+        
+        if (numRows > 0)
+        {
+        	// Let any observers know that changes were made.
+        	getContext().getContentResolver().notifyChange(uri, null);
+        }
+                        
+		return numRows;                
 	}
 
 	/* (non-Javadoc)

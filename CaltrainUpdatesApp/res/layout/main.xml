@@ -9,6 +9,7 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:gravity="right"
+    	android:visibility="gone"
     	>
 		<ImageButton 
 			android:src="@drawable/refresh"
@@ -36,12 +37,14 @@
 		android:layout_height="wrap_content"
 		android:text="error" />
 	
-	<fragment android:name="com.lowetech.caltrainupdates.android.AlertsListFragment"
+	<fragment
 	    android:id="@+id/list"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
 	    android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
-	    
+	    android:name="com.lowetech.caltrainupdates.android.AlertsListFragment" >
+	    <!-- Preview: layout=@layout/alerts_list -->
+	</fragment>
 
 <!--  	<ListView android:id="@id/android:list" -->
 <!-- 		android:layout_width="match_parent" -->

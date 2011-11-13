@@ -24,8 +24,9 @@ public class AlertsListFragment extends ListFragment
      * The columns we are interested in from the database
      */
     private static final String[] PROJECTION = new String[] {
-            TrainUpdates._ID, // 0
-            TrainUpdates.DATE, // 1
+            TrainUpdates._ID,
+            TrainUpdates.DATE_HEADER,
+            TrainUpdates.DATE,
             TrainUpdates.TEXT
     };
 	
@@ -33,34 +34,6 @@ public class AlertsListFragment extends ListFragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		
-//        setContentView(R.layout.main);
-//        final ImageButton buttonRefresh = (ImageButton) findViewById(R.id.buttonRefresh);
-//        
-//        buttonRefresh.setOnClickListener(new OnClickListener()
-//		{
-//			
-//			public void onClick(View v)
-//			{
-//				manualRefreshInProgress = true;
-//				setSpinnerState(true);
-//				ServiceHelper.fetchUpdates(getApplicationContext());												
-//			}
-//		});
-//        
-//        Button buttonRegister = (Button)findViewById(R.id.buttonRegister);
-//        
-//        buttonRegister.setOnClickListener(new OnClickListener()
-//		{
-//			
-//			public void onClick(View v)
-//			{
-//				
-//				//C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
-//				NotificationsHandler.showNotification("ticker", "title", "message", getApplicationContext(), 3000);
-//			}
-//		});
-//        
         
         Intent intent = getActivity().getIntent();
         intent.setData(TrainUpdates.CONTENT_URI);
@@ -71,18 +44,14 @@ public class AlertsListFragment extends ListFragment
                 TrainUpdates.DEFAULT_SORT_ORDER);
 
         // Used to map notes entries from the database to views
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+        SimpleCursorAdapter adapter = new UpdatesCursorAdapter(
         		getActivity(), 
         		R.layout.two_line_list_item, 
         		cursor,
-                new String[] { TrainUpdates.DATE, TrainUpdates.TEXT }, 
-                new int[] { R.id.date, R.id.updateText });
+                new String[] { TrainUpdates.DATE_HEADER, TrainUpdates.TEXT, TrainUpdates.DATE }, 
+                new int[] { R.id.dateHeader, R.id.updateText, R.id.date});
         setListAdapter(adapter);	
         
-//        if (C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
-//        {
-//        	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
-//        }
 	}
 	
 	@Override

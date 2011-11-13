@@ -83,7 +83,9 @@ public final class Constants
          */
         public static final String DEFAULT_SORT_ORDER = "twitterId DESC";
         
-        public static final String DATE = "date";
+        public static final String DATE = "timestamp";
+        
+        public static final String DATE_HEADER = "timestamp_header";
         
         //public static final String KEY = "key";
         
