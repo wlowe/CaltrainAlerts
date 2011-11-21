@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.c2dm.C2DMBaseReceiver;
+import com.google.android.c2dm.C2DMessaging;
 
 //TODO: merge this class with UpdatesServer
 public class C2DMReceiver extends C2DMBaseReceiver
@@ -35,6 +36,14 @@ public class C2DMReceiver extends C2DMBaseReceiver
 		Bundle extras = intent.getExtras();
 		
 		String msgType = extras.getString("msgType");
+		String regId = extras.getString("regId");
+//		Log.i(TAG, "msg keys: " + regId);
+		
+		if (!C2DMessaging.getRegistrationId(context).equals(regId))
+		{
+			Log.i(TAG, "got mismatched regId");
+			// 
+		}
 		
 		Log.i(TAG, "got C2DMessage " + msgType);
 		

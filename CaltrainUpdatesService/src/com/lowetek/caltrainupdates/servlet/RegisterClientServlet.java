@@ -18,6 +18,10 @@ import com.lowetek.caltrainupdates.data.UpdateClient;
 
 public class RegisterClientServlet extends HttpServlet 
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected static final String REG_ID_PARM = "regId";
 	private static final Logger log = Logger.getLogger(RegisterClientServlet.class.getName());
 	

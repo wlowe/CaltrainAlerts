@@ -52,7 +52,8 @@ public class PingClientServlet extends HttpServlet
 			.param(C2DMessaging.PARAM_REGISTRATION_ID, regId)
 			.param(C2DMessaging.PARAM_COLLAPSE_KEY, collapseStr)
 			.param("data.msgType", "ping")
-			.param("data.message", message);	      
+			.param("data.message", message)
+			.param("data.regId", regId);	      
         
         // Task queue implements the exponential backoff
         long jitter = (int) Math.random() * C2DMSettings.MAX_JITTER_MSEC;
