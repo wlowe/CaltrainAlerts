@@ -129,21 +129,6 @@ public class Main extends FragmentActivity implements ServerEventListener
 	
 	private void setSpinnerState(boolean isActive)
 	{
-		ImageButton buttonRefresh = (ImageButton) findViewById(R.id.buttonRefresh);
-		ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
-		
-		if (isActive)
-		{			
-			imageRefresh.setVisibility(View.VISIBLE);
-			buttonRefresh.setVisibility(View.GONE);
-			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
-			imageRefresh.startAnimation(rotate);
-		}
-		else
-		{			
-			imageRefresh.clearAnimation();
-			imageRefresh.setVisibility(View.GONE);			
-			buttonRefresh.setVisibility(View.VISIBLE);
-		}
+		//TODO: feedback for when refreshing...
 	}
 }

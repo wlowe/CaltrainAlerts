@@ -22,6 +22,7 @@
 		android:paddingRight="8dp"
 		android:layout_width="match_parent" 
 		android:layout_height="wrap_content"
+		android:textColorLink="#0787ce"
 		android:autoLink="all" />
 	
 	<TextView android:id="@+id/date" 
