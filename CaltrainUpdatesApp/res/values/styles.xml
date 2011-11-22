@@ -2,7 +2,7 @@
 <resources>
     <style name="CaltrainUpdates" parent="@style/Theme.Sherlock">
 <!--     	<item name="android:background">#58647e</item> -->
-	<item name="abBackground">@drawable/action_bar</item>
+	<item name="abBackground">@drawable/bg_action_bar</item>
     <item name="abLogo">@drawable/ic_menu_logo</item>
     <item name="abDisplayOptions">useLogo|showHome</item>
     </style>

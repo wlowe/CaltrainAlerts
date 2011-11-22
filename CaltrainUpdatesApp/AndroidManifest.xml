@@ -73,6 +73,7 @@
 				<category android:name="com.lowetech.caltrainupdates.android" />
 			</intent-filter>
 		</receiver>
+		<activity android:name=".activity.Preferences"></activity>
 
 
 	</application>
