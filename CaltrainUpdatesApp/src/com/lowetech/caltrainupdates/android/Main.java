@@ -2,6 +2,7 @@ package com.lowetech.caltrainupdates.android;
 
 import java.util.HashMap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -14,10 +15,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.android.c2dm.C2DMessaging;
+import com.lowetech.caltrainupdates.android.activity.Preferences;
 
 public class Main extends FragmentActivity implements ServerEventListener 
 {		
 	private static final int REFRESH_MENU_ID = 1;
+	private static final int PREFERENCES_MENU_ID = 2;
 	
     private static final String USER_REFRESH_STATE = "userRefreshState";
     private boolean manualRefreshInProgress = false;
@@ -58,7 +61,11 @@ public class Main extends FragmentActivity implements ServerEventListener
     {
     	MenuItem refresh = menu.add(Menu.NONE, REFRESH_MENU_ID, Menu.NONE, "");
     	refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-    	refresh.setIcon(R.drawable.refresh);    	
+    	refresh.setIcon(R.drawable.ic_refresh);  
+    	
+    	MenuItem preferences = menu.add(Menu.NONE, PREFERENCES_MENU_ID, Menu.NONE, "");
+    	preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    	preferences.setIcon(R.drawable.ic_preferences);
     	
     	return super.onCreateOptionsMenu(menu);
     }
@@ -73,6 +80,11 @@ public class Main extends FragmentActivity implements ServerEventListener
 				setSpinnerState(true);
 				ServiceHelper.fetchUpdates(getApplicationContext());	
 	            return true;
+	            
+	        case PREFERENCES_MENU_ID:
+	        	Intent intent = new Intent(this, Preferences.class);
+	        	startActivity(intent);
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -117,21 +129,6 @@ public class Main extends FragmentActivity implements ServerEventListener
 	
 	private void setSpinnerState(boolean isActive)
 	{
-		ImageButton buttonRefresh = (ImageButton) findViewById(R.id.buttonRefresh);
-		ImageView imageRefresh = (ImageView) findViewById(R.id.imageRefresh);
-		
-		if (isActive)
-		{			
-			imageRefresh.setVisibility(View.VISIBLE);
-			buttonRefresh.setVisibility(View.GONE);
-			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
-			imageRefresh.startAnimation(rotate);
-		}
-		else
-		{			
-			imageRefresh.clearAnimation();
-			imageRefresh.setVisibility(View.GONE);			
-			buttonRefresh.setVisibility(View.VISIBLE);
-		}
+		//TODO: feedback for when refreshing...
 	}
 }

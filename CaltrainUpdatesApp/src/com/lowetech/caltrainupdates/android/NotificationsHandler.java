@@ -8,7 +8,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 
 /**
  * @author nopayne
@@ -33,7 +37,7 @@ public class NotificationsHandler
 	static
 	{
 		notification.icon = R.drawable.ic_notify_alert;
-		notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+		notification.defaults |= Notification.DEFAULT_VIBRATE;
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	}
 	
@@ -50,6 +54,11 @@ public class NotificationsHandler
 	public static void showNotification(CharSequence tickerText, CharSequence title, CharSequence message, Context context)
 	{
 		updatesHandler.removeCallbacks(cancelAlertRunable);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String ringtoneKey = context.getString(R.string.ringtoneKey);
+		String defaultAlert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+		String alertSound = prefs.getString(ringtoneKey, defaultAlert);
+		notification.sound = alertSound != null ? Uri.parse(alertSound) : null;
 		notification.when = System.currentTimeMillis();
 		Intent notificationIntent = new Intent(context, Main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);

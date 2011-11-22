@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="Notifications">
+        <RingtonePreference android:ringtoneType="notification" android:showDefault="true" android:showSilent="true" android:key="@string/ringtoneKey" android:title="Alert Ringtone"/>
+    </PreferenceCategory>
+
+    
+
+</PreferenceScreen>
