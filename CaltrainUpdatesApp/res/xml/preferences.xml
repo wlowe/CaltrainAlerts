@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="Notifications">
-        <RingtonePreference android:ringtoneType="notification" android:showDefault="true" android:showSilent="true" android:key="@string/ringtoneKey" android:title="Alert Ringtone"/>
+        <CheckBoxPreference android:title="Auto Update" android:summary="Automatically receive new updates." android:key="@string/autoUpdateKey" android:defaultValue="true"/>
+        <RingtonePreference android:ringtoneType="notification" android:showDefault="true" android:showSilent="true" android:key="@string/ringtoneKey" android:title="Alert Ringtone" android:summary="Select a ringtone to play when new alerts are received."/>
     </PreferenceCategory>
 
     

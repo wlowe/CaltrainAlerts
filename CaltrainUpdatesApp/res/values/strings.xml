@@ -3,4 +3,5 @@
     <string name="hello">Hello World, Main!</string>
     <string name="app_name">Caltrain Alerts</string>
     <string name="ringtoneKey">notificationRingtone</string>
+    <string name="autoUpdateKey">autoUpdate</string>
 </resources>
