@@ -36,6 +36,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>Register</servlet-name>
 		<url-pattern>/register</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>ReRegister</servlet-name>
+		<servlet-class>com.lowetek.caltrainupdates.servlet.ReRegisterClientServlet</servlet-class>	
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>ReRegister</servlet-name>
 		<url-pattern>/reregister</url-pattern>

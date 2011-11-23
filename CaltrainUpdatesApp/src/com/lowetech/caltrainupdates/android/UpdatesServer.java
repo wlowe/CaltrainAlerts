@@ -112,9 +112,39 @@ public class UpdatesServer
 		{
 			throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
 		}
-		
-		
 	}
+
+//	public static void unRegisterClient(String regId) throws IOException
+//	{
+//		if (regId == null)
+//		{
+//			throw new IllegalArgumentException("Must specify a regId");
+//		}
+//		
+//		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+//		
+//		params.add(new BasicNameValuePair("regId", regId));
+//	
+//		URI postUri = null;
+//		
+//		try
+//		{
+//			postUri = URIUtils.createURI("https", SERVER, -1, "/unregister", URLEncodedUtils.format(params, "UTF-8"), null);
+//		}
+//		catch (URISyntaxException ex)		
+//		{
+//			throw new IOException("Unable to build request URI");
+//		}
+//		
+//		HttpPost post = new HttpPost(postUri);
+//		HttpResponse response = httpClient.execute(post);
+//		StatusLine status = response.getStatusLine();
+//		
+//		if (status.getStatusCode() != 200)
+//		{
+//			throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
+//		}
+//	}
 	
 	public static void reRegisterClient(String oldRegId, String newRegId) throws IOException
 	{

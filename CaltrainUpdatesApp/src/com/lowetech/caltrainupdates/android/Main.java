@@ -50,6 +50,7 @@ public class Main extends FragmentActivity implements ServerEventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        //TODO: need to check settings before registering
         if (C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
         {
         	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);

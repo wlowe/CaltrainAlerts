@@ -64,16 +64,29 @@ public class ReRegisterClientServlet extends HttpServlet
 			if (existingClient.isEmpty())
 			{
 				log.info("Old client not found: " + oldRegId);
+				return;
 			}
 			else
 			{
 				pm.deletePersistentAll(existingClient);				
 			}
 			
-			// Create the new client.
-			UpdateClient client = new UpdateClient(oldRegId);
-			pm.makePersistent(client);
-			log.info("Client registered: " + oldRegId);
+			query = pm.newQuery(UpdateClient.class);
+			query.setFilter("registrationId == '" + newRegId + "'");
+			query.setRange(0, 1);
+			List<UpdateClient> newClient = (List<UpdateClient>)query.execute();
+				
+			if(newClient.isEmpty())
+			{
+				// Create the new client.
+				UpdateClient client = new UpdateClient(newRegId);
+				pm.makePersistent(client);
+				log.info("Client registered: " + newRegId);
+			}
+			else
+			{
+				log.info("Client already registered");
+			}
 			
 			resp.setStatus(200);
 			resp.getOutputStream().write("OK".getBytes());

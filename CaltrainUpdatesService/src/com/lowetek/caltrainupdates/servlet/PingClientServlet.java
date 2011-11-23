@@ -1,8 +1,11 @@
 package com.lowetek.caltrainupdates.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +16,8 @@ import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.lowetek.caltrainupdates.data.C2DMSettings;
+import com.lowetek.caltrainupdates.data.PMF;
+import com.lowetek.caltrainupdates.data.UpdateClient;
 
 public class PingClientServlet extends HttpServlet
 {
@@ -32,6 +37,28 @@ public class PingClientServlet extends HttpServlet
 			resp.getOutputStream().write("No registration ID specified".getBytes());
 			log.severe("No registration ID specified");
 			return;
+		}
+		
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try
+		{
+			// Check for existing clients with the same registration id.
+			Query query = pm.newQuery(UpdateClient.class);
+			query.setFilter("registrationId == '" + regId + "'");
+			query.setRange(0, 1);
+			List<UpdateClient> existingClient = (List<UpdateClient>)query.execute();
+			
+			if (existingClient.isEmpty())
+			{
+				// Create the new client.
+				log.info("Client doesn't exist: " + regId);
+				return;
+			}	
+		}
+		finally
+		{
+			pm.close();
 		}
 		
 		String message = req.getParameter(MESSAGE_PARM);

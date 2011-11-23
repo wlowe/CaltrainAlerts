@@ -37,12 +37,27 @@ public class C2DMReceiver extends C2DMBaseReceiver
 		
 		String msgType = extras.getString("msgType");
 		String regId = extras.getString("regId");
+		String storedRegId = C2DMessaging.getRegistrationId(context);
 //		Log.i(TAG, "msg keys: " + regId);
 		
-		if (!C2DMessaging.getRegistrationId(context).equals(regId))
+		if (storedRegId == null || storedRegId.isEmpty())
+		{
+			// I don't know if this can happen.  If so, just try to unregister and ignore the message.
+			C2DMessaging.unregister(context);
+			return;
+		}
+		else if (!storedRegId.equals(regId))
 		{
 			Log.i(TAG, "got mismatched regId");
-			// 
+			try
+			{
+				UpdatesServer.reRegisterClient(regId, storedRegId);
+			}
+			catch(IOException ex)
+			{
+				Log.e(TAG, "Unable to reregister: ", ex);
+			}
+			return; 
 		}
 		
 		Log.i(TAG, "got C2DMessage " + msgType);
@@ -82,6 +97,7 @@ public class C2DMReceiver extends C2DMBaseReceiver
 	@Override
     public void onUnregistered(Context context) 
     {
+		Log.i(TAG, "unregistered client");
     }
 	
 	
