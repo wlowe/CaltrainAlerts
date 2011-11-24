@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.lowetech.caltrainupdates.android" android:versionCode="1"
+	package="net.lowetek.caltrainalerts.android" android:versionCode="1"
 	android:versionName="1.0">
 	
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -18,9 +18,9 @@
 	
 	<!-- Cloud to Device Messaging permissions -->
     <permission
-        android:name="com.lowetech.caltrainupdates.android.permission.C2D_MESSAGE"
+        android:name="net.lowetek.caltrainalerts.android.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="com.lowetech.caltrainupdates.android.permission.C2D_MESSAGE" />
+    <uses-permission android:name="net.lowetek.caltrainalerts.android.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
 	
@@ -28,7 +28,7 @@
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity 
-		    android:name=".Main" 
+		    android:name=".activity.Main" 
 		    android:label="@string/app_name"
 		    android:theme="@style/CaltrainUpdates"
 		    android:logo="@drawable/ic_menu_logo">
@@ -40,10 +40,10 @@
 
 		<service android:name=".UpdatesService">
 			<intent-filter>
-				<action android:name="com.lowetech.caltrainupdates.android.refresh"></action>
+				<action android:name="net.lowetek.caltrainalerts.android.refresh"></action>
 			</intent-filter>
 		</service>
-		<provider android:authorities="com.lowetech.caltrainupdates"
+		<provider android:authorities="net.lowetek.caltrainalerts"
 			android:name=".UpdatesProvider"></provider>
 
 		<!--
@@ -53,8 +53,7 @@
 			section in the manifest, replacing
 			"com.google.android.apps.chrometophone" with its package name.
 		-->
-		<service android:name=".C2DMReceiver" />	
-		
+		<service android:name=".C2DMReceiver" />
 
 		<!--
 			Only Google services can send messages to the app. If this permission
@@ -65,24 +64,17 @@
 			<!-- Receive actual messages -->
 			<intent-filter>
 				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
-				<category android:name="com.lowetech.caltrainupdates.android" />
+				<category android:name="net.lowetek.caltrainalerts.android" />
 			</intent-filter>
 			<!-- Receive registration ids -->
 			<intent-filter>
 				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-				<category android:name="com.lowetech.caltrainupdates.android" />
+				<category android:name="net.lowetek.caltrainalerts.android" />
 			</intent-filter>
 		</receiver>
 		<activity android:name=".activity.Preferences"></activity>
 
 
 	</application>
-
-
-
-	
-
-
-
 <uses-sdk android:minSdkVersion="8"/>
 </manifest> 

@@ -1,18 +1,19 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import net.lowetek.caltrainalerts.android.UpdatesService.UpdatesResult;
 
 import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.lowetech.caltrainupdates.android.UpdatesService.UpdatesResult;
 
 /**
  * @author nopayne

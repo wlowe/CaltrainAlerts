@@ -1,8 +1,11 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android.activity;
 
+import net.lowetek.caltrainalerts.android.Constants.TrainUpdates;
+import net.lowetek.caltrainalerts.android.R.id;
+import net.lowetek.caltrainalerts.android.R.layout;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 
-import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
+import net.lowetek.caltrainalerts.android.R;
+import net.lowetek.caltrainalerts.android.UpdatesCursorAdapter;
 
 /**
  * @author nopayne

@@ -1,6 +1,9 @@
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android.activity;
 
 import java.util.HashMap;
+
+import net.lowetek.caltrainalerts.android.R.drawable;
+import net.lowetek.caltrainalerts.android.R.layout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +18,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.android.c2dm.C2DMessaging;
-import com.lowetech.caltrainupdates.android.activity.Preferences;
+
+import net.lowetek.caltrainalerts.android.Constants;
+import net.lowetek.caltrainalerts.android.NotificationsHandler;
+import net.lowetek.caltrainalerts.android.R;
+import net.lowetek.caltrainalerts.android.ServerEventListener;
+import net.lowetek.caltrainalerts.android.ServiceHelper;
 
 public class Main extends FragmentActivity implements ServerEventListener 
 {		

@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
 
 import java.io.IOException;
 import java.net.URI;

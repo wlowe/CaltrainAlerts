@@ -1,5 +1,8 @@
-package com.lowetech.caltrainupdates.android.activity;
+package net.lowetek.caltrainalerts.android.activity;
 
+import net.lowetek.caltrainalerts.android.C2DMReceiver;
+import net.lowetek.caltrainalerts.android.Constants;
+import net.lowetek.caltrainalerts.android.UpdatesServer;
 import android.app.backup.SharedPreferencesBackupHelper;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -7,10 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import com.google.android.c2dm.C2DMessaging;
-import com.lowetech.caltrainupdates.android.C2DMReceiver;
-import com.lowetech.caltrainupdates.android.Constants;
-import com.lowetech.caltrainupdates.android.R;
-import com.lowetech.caltrainupdates.android.UpdatesServer;
+import net.lowetek.caltrainalerts.android.R;
 
 
 

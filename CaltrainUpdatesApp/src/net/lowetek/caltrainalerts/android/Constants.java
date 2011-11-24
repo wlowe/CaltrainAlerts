@@ -1,4 +1,4 @@
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 
 public final class Constants
 {
-	public static final String AUTHORITY = "com.lowetech.caltrainupdates";
+	public static final String AUTHORITY = "net.lowetek.caltrainalerts";
 	
 	public static final String C2DM_SENDER = "caltrainupdates@gmail.com";
 		
@@ -38,7 +38,7 @@ public final class Constants
 				if (mediaState.equals(Environment.MEDIA_MOUNTED) || mediaState.equals(Environment.MEDIA_MOUNTED_READ_ONLY))
 				{
 					File baseStorageDir = Environment.getExternalStorageDirectory();
-					File prefsFile = new File(baseStorageDir.getAbsolutePath() + "/Android/data/com.lowetech.caltrainupdates/files/debug.properties");
+					File prefsFile = new File(baseStorageDir.getAbsolutePath() + "/Android/data/net.lowetek.caltrainalerts/files/debug.properties");
 					
 					if (prefsFile.exists() && prefsFile.canRead())
 					{

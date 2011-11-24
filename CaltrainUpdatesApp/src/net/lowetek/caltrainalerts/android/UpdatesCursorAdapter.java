@@ -1,12 +1,14 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import net.lowetek.caltrainalerts.android.Constants.TrainUpdates;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +16,7 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
+import net.lowetek.caltrainalerts.android.R;
 
 /**
  * @author nopayne

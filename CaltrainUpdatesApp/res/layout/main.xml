@@ -15,7 +15,7 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:layout_weight="1"
-	    android:name="com.lowetech.caltrainupdates.android.AlertsListFragment" >
+	    android:name="net.lowetek.caltrainalerts.android.activity.AlertsListFragment" >
 	    <!-- Preview: layout=@layout/alerts_list -->
 	</fragment>
 

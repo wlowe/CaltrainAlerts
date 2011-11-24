@@ -1,7 +1,10 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
+
+import net.lowetek.caltrainalerts.android.R;
+import net.lowetek.caltrainalerts.android.activity.Main;
 
 import android.app.Notification;
 import android.app.NotificationManager;

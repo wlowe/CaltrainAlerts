@@ -1,9 +1,11 @@
 /**
  * 
  */
-package com.lowetech.caltrainupdates.android;
+package net.lowetek.caltrainalerts.android;
 
 import java.io.IOException;
+
+import net.lowetek.caltrainalerts.android.Constants.TrainUpdates;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +18,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
 
 /**
  * @author nopayne
@@ -24,7 +25,7 @@ import com.lowetech.caltrainupdates.android.Constants.TrainUpdates;
  */
 public class UpdatesService extends IntentService
 {
-	public static final String REFRESH_ACTION = "com.lowetech.caltrainupdates.android.refresh";
+	public static final String REFRESH_ACTION = "net.lowetek.caltrainalerts.android.refresh";
 	public static final String EXTRA_LATEST_AVAILABLE_TWEET = "latestServerTwitterId";
 	private static final String TAG = UpdatesService.class.getSimpleName();
 
