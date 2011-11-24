@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetek.caltrainupdates.servlet;
+package net.lowetek.caltrainalerts.servlet;
 
 import java.io.IOException;
 
@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.lowetek.caltrainalerts.data.DataStorage;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
 import com.google.appengine.api.datastore.DatastoreTimeoutException;
-import com.lowetek.caltrainupdates.data.DataStorage;
 
 /**
  * @author nopayne

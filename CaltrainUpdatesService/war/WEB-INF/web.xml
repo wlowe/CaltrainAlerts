@@ -6,7 +6,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
 		<servlet-name>JebcorScratch</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.JebcorScratchServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.JebcorScratchServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>JebcorScratch</servlet-name>
@@ -14,7 +14,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>FetchUpdates</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.FetchUpdatesServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.FetchUpdatesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FetchUpdates</servlet-name>
@@ -22,7 +22,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>Updates</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.UpdatesServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.UpdatesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Updates</servlet-name>
@@ -30,7 +30,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>Register</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.RegisterClientServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.RegisterClientServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Register</servlet-name>
@@ -38,7 +38,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ReRegister</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.ReRegisterClientServlet</servlet-class>	
+		<servlet-class>net.lowetek.caltrainalerts.servlet.ReRegisterClientServlet</servlet-class>	
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ReRegister</servlet-name>
@@ -46,7 +46,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>NotifyClient</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.NotifyClientServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.NotifyClientServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>NotifyClient</servlet-name>
@@ -54,7 +54,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>PingClient</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.PingClientServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.PingClientServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>PingClient</servlet-name>
@@ -62,7 +62,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>DeleteOldUpdates</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.DeleteOldUpdatesServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.DeleteOldUpdatesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteOldUpdates</servlet-name>
@@ -78,7 +78,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   	</servlet-mapping>  	
   	<servlet>
 		<servlet-name>Callback</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.CallbackServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.CallbackServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Callback</servlet-name>
@@ -86,7 +86,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>AuthAccount</servlet-name>
-		<servlet-class>com.lowetek.caltrainupdates.servlet.AuthAccountServlet</servlet-class>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.AuthAccountServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AuthAccount</servlet-name>

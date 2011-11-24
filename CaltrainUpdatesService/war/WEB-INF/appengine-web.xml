@@ -6,8 +6,8 @@
 	<!-- Configure java.util.logging -->
 	<system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
-		<!-- <property name="com.lowetech.feed" value="InternetRadio" />-->
-		<property name="com.lowetech.feed" value="caltrain" />
+		<!-- <property name="net.lowetek.feed" value="InternetRadio" />-->
+		<property name="net.lowetek.feed" value="caltrain" />
 	</system-properties>
 	
 	<sessions-enabled>true</sessions-enabled>

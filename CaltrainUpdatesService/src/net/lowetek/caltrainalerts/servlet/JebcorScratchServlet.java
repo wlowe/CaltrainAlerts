@@ -1,4 +1,4 @@
-package com.lowetek.caltrainupdates.servlet;
+package net.lowetek.caltrainalerts.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,11 +18,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.lowetek.caltrainalerts.data.PMF;
+import net.lowetek.caltrainalerts.data.TrainUpdate;
+
 import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
-import com.lowetek.caltrainupdates.data.PMF;
-import com.lowetek.caltrainupdates.data.TrainUpdate;
 
 @SuppressWarnings("serial")
 public class JebcorScratchServlet extends HttpServlet
@@ -32,7 +33,7 @@ public class JebcorScratchServlet extends HttpServlet
 		resp.setContentType("text/plain");
 		resp.getWriter().println("Hello, world");
 		StringBuffer content = new StringBuffer();
-		String feedName = System.getProperty("com.lowetech.feed", "caltrain");
+		String feedName = System.getProperty("net.lowetek.feed", "caltrain");
 		
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		

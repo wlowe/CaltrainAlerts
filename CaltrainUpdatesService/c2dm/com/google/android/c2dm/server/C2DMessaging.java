@@ -33,11 +33,12 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import net.lowetek.caltrainalerts.data.PMF;
+
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import com.lowetek.caltrainupdates.data.PMF;
 
 /**
  */

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetek.caltrainupdates.servlet;
+package net.lowetek.caltrainalerts.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

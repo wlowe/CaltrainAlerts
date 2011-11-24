@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lowetek.caltrainupdates.data;
+package net.lowetek.caltrainalerts.data;
 
 import java.util.ArrayList;
 import java.util.Collections;

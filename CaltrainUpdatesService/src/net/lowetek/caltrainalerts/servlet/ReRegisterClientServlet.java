@@ -1,4 +1,4 @@
-package com.lowetek.caltrainupdates.servlet;
+package net.lowetek.caltrainalerts.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.lowetek.caltrainupdates.data.PMF;
-import com.lowetek.caltrainupdates.data.UpdateClient;
+import net.lowetek.caltrainalerts.data.PMF;
+import net.lowetek.caltrainalerts.data.UpdateClient;
+
 
 
 

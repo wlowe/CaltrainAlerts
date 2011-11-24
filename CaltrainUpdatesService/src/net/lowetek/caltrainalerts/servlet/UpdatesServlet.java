@@ -1,4 +1,4 @@
-package com.lowetek.caltrainupdates.servlet;
+package net.lowetek.caltrainalerts.servlet;
 
 import java.io.IOException;
 
@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.lowetek.caltrainupdates.data.DataStorage;
+import net.lowetek.caltrainalerts.data.DataStorage;
+
 
 @SuppressWarnings("serial")
 public class UpdatesServlet extends HttpServlet 
