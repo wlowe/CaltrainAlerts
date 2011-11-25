@@ -12,34 +12,27 @@
 
 package net.lowetek.caltrainalerts.android.activity;
 
-import java.util.HashMap;
-
-import net.lowetek.caltrainalerts.android.R.drawable;
-import net.lowetek.caltrainalerts.android.R.layout;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-
-import com.google.android.c2dm.C2DMessaging;
-
 import net.lowetek.caltrainalerts.android.Constants;
 import net.lowetek.caltrainalerts.android.NotificationsHandler;
 import net.lowetek.caltrainalerts.android.R;
 import net.lowetek.caltrainalerts.android.ServerEventListener;
 import net.lowetek.caltrainalerts.android.ServiceHelper;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.c2dm.C2DMessaging;
 
 public class Main extends FragmentActivity implements ServerEventListener 
 {		
@@ -65,6 +58,19 @@ public class Main extends FragmentActivity implements ServerEventListener
     			
     			manualRefreshInProgress = false;
     		}
+    		else if (msg.what == ServiceHelper.SERVICE_ERROR_EVENT)
+    		{
+    			setSpinnerState(false);
+    			String errorMessage = msg.getData().getString(ServiceHelper.ERROR_MSG_KEY);
+    			
+    			if (errorMessage == null)
+    			{
+    				errorMessage = "Unknown error";
+    			}
+    			
+    			Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+    			
+    		}
     	}
     };
 	
@@ -89,6 +95,7 @@ public class Main extends FragmentActivity implements ServerEventListener
         }
     }
     
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -109,10 +116,25 @@ public class Main extends FragmentActivity implements ServerEventListener
         switch (item.getItemId()) 
         {
 	        case REFRESH_MENU_ID:
-	        	manualRefreshInProgress = true;
-				setSpinnerState(true);
-				ServiceHelper.fetchUpdates(getApplicationContext());	
-	            return true;
+	        	
+	        	Context context = getApplicationContext();
+	        	
+	        	// Connectivity checks removed because Android's implementation of this is buggy...
+//	        	ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(CONNECTIVITY_SERVICE);
+//	        	NetworkInfo netState = connMgr.getActiveNetworkInfo();
+	        	
+//	        	if (netState.isConnected())
+//	        	{
+		        	manualRefreshInProgress = true;
+					setSpinnerState(true);
+					ServiceHelper.fetchUpdates(context);	
+//	        	}
+//	        	else
+//	        	{
+//	        		Toast.makeText(context, "Please enable your network connection", Toast.LENGTH_LONG);
+//	        	}
+					
+				return true;
 	            
 	        case PREFERENCES_MENU_ID:
 	        	Intent intent = new Intent(this, Preferences.class);
@@ -161,9 +183,13 @@ public class Main extends FragmentActivity implements ServerEventListener
     	manualRefreshInProgress = state.getBoolean(USER_REFRESH_STATE);
     }
 
-	public void onServerEvent(int eventId, HashMap<String, Object> extras)
+	public void onServerEvent(int eventId, Bundle extras)
 	{
-		serverEventHandler.sendEmptyMessage(eventId);
+//		serverEventHandler.sendEmptyMessage(eventId);
+		Message msg = new Message();
+		msg.what = eventId;
+		msg.setData(extras);
+		serverEventHandler.sendMessage(msg);
 	}
 	
 	private void setSpinnerState(boolean isActive)

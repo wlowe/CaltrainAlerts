@@ -25,6 +25,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 
 
@@ -38,6 +39,19 @@ public class UpdatesService extends IntentService
 	public static final String EXTRA_LATEST_AVAILABLE_TWEET = "latestServerTwitterId";
 	private static final String TAG = UpdatesService.class.getSimpleName();
 
+	/**
+	 * An exception to signify errors occuring in this service.
+	 * @author nopayne
+	 *
+	 */
+	private static class UpdatesServiceException extends Exception
+	{
+
+		public UpdatesServiceException(Throwable ex) 
+		{
+			super(ex);
+		}
+	}
 	
 	public static class UpdatesResult
 	{
@@ -63,8 +77,7 @@ public class UpdatesService extends IntentService
 		{
 			UpdatesResult result = null;
 			
-			try
-			{
+			
 				String latestIdStr = intent.getStringExtra(EXTRA_LATEST_AVAILABLE_TWEET);
 				long latestId = -1;
 				
@@ -73,26 +86,30 @@ public class UpdatesService extends IntentService
 					latestId = Long.parseLong(latestIdStr);
 				}
 				
-				result = refreshUpdates(latestId);
-				
-
+				try 
+				{
+					result = refreshUpdates(latestId);
+				} 
+				catch (UpdatesServiceException e) 
+				{
+					Bundle extras = new Bundle();
+					extras.putString(ServiceHelper.ERROR_MSG_KEY, "Unable to fetch new alerts.");
+					ServiceHelper.onServerEvent(ServiceHelper.SERVICE_ERROR_EVENT, extras);
+				}
+						
+			if (result != null && result.numUpdates > 0)
+			{
+				ServiceHelper.onNewUpdatesAvailable(result, getApplicationContext());
 			}
-			finally
-			{				
-				if (result != null && result.numUpdates > 0)
-				{
-					ServiceHelper.onNewUpdatesAvailable(result, getApplicationContext());
-				}
-				else
-				{
-					ServiceHelper.onServerEvent(ServiceHelper.REFRESH_FINISHED_EVENT, null);
-				}
+			else
+			{
+				ServiceHelper.onServerEvent(ServiceHelper.REFRESH_FINISHED_EVENT, null);
 			}
 		}
 
 	}
 	
-	private UpdatesResult refreshUpdates(long latestAvailableId)
+	private UpdatesResult refreshUpdates(long latestAvailableId) throws UpdatesServiceException
 	{
 		try
 		{
@@ -155,20 +172,9 @@ public class UpdatesService extends IntentService
 					values[i] = new ContentValues();
 					values[i].put(TrainUpdates.DATE, (Integer)currObject.opt("date"));
 					values[i].put(TrainUpdates.TEXT, (String)currObject.opt("text"));
-					values[i].put(TrainUpdates.TWITTER_ID, (Long)currObject.opt("twitterId"));
-					
-					
-//					currObject = resultArray.getJSONObject(i);
-//					builder = ContentProviderOperation.newInsert(Constants.TrainUpdates.CONTENT_URI);
-//					builder.withValue(TrainUpdates.DATE, currObject.opt("date"));
-//					builder.withValue(TrainUpdates.TEXT, currObject.opt("text"));
-//					builder.withValue(TrainUpdates.TWITTER_ID, currObject.opt("twitterId"));
-//					operationList.add(builder.build());
-					
-					
+					values[i].put(TrainUpdates.TWITTER_ID, (Long)currObject.opt("twitterId"));		
 				}
 	
-//				resolver.applyBatch(Constants.AUTHORITY, operationList);
 				resolver.bulkInsert(Constants.TrainUpdates.CONTENT_URI, values);
 				UpdatesResult result = new UpdatesResult();
 				result.numUpdates = size;
@@ -179,10 +185,12 @@ public class UpdatesService extends IntentService
 		catch (IOException ex)
 		{
 			Log.e(TAG, "Error getting updates", ex);
+			throw new UpdatesServiceException(ex);
 		}
 		catch (JSONException ex)
 		{
 			Log.e(TAG, "Error parsing updates", ex);
+			throw new UpdatesServiceException(ex);
 		}
 //		catch (RemoteException ex)
 //		{

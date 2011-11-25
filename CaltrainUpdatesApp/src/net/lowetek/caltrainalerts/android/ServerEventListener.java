@@ -12,7 +12,7 @@
 
 package net.lowetek.caltrainalerts.android;
 
-import java.util.HashMap;
+import android.os.Bundle;
 
 /**
  * A listener for content events that come from the server.
@@ -22,5 +22,5 @@ import java.util.HashMap;
  */
 public interface ServerEventListener
 {
-	public void onServerEvent(int eventId, HashMap<String,Object> extras);
+	public void onServerEvent(int eventId, Bundle extras);
 }

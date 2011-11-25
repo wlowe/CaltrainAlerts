@@ -13,14 +13,13 @@
 package net.lowetek.caltrainalerts.android;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
-import net.lowetek.caltrainalerts.android.UpdatesService.UpdatesResult;
-
 import junit.framework.Assert;
+import net.lowetek.caltrainalerts.android.UpdatesService.UpdatesResult;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 
@@ -34,6 +33,9 @@ public class ServiceHelper
 	
 	public final static int REFRESH_FINISHED_EVENT = 0;
 	public final static int REGISTRATION_FINISHED_EVENT = 1;
+	public final static int SERVICE_ERROR_EVENT = 2;
+	
+	public final static String ERROR_MSG_KEY = "ErrorMsgKey";
 	
 	private final static ArrayList<ServerEventListener> eventListeners = new ArrayList<ServerEventListener>();
 	private final static HashSet<Integer> pendingEvents = new HashSet<Integer>();
@@ -64,7 +66,7 @@ public class ServiceHelper
 		}
 	}
 	
-	public static void onServerEvent(int eventId, HashMap<String, Object> extras)
+	public static void onServerEvent(int eventId, Bundle extras)
 	{
 		synchronized(eventListeners)
 		{
