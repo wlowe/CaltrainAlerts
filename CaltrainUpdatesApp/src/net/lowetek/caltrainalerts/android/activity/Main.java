@@ -17,9 +17,12 @@ import java.util.HashMap;
 import net.lowetek.caltrainalerts.android.R.drawable;
 import net.lowetek.caltrainalerts.android.R.layout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -70,10 +73,18 @@ public class Main extends FragmentActivity implements ServerEventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        //TODO: need to check settings before registering
-        if (C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
+        Context context = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String doAutoUpdateKey = context.getString(R.string.autoUpdateKey);
+		boolean doAutoUpdate = prefs.getBoolean(doAutoUpdateKey, true);
+        
+		// If we're not registered yet, register and grab updates.
+        if (doAutoUpdate && C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
         {
         	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
+        	manualRefreshInProgress = true;
+        	setSpinnerState(true);
+			ServiceHelper.fetchUpdates(getApplicationContext());
         }
     }
     
