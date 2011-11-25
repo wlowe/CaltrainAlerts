@@ -62,7 +62,7 @@ public class ServiceHelper
 	{
 		synchronized(pendingEvents)
 		{
-			return pendingEvents.contains(new Integer(eventId));
+			return pendingEvents.contains(Integer.valueOf(eventId));
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class ServiceHelper
 		{
 			synchronized(pendingEvents)
 			{
-				pendingEvents.remove(new Integer(eventId));
+				pendingEvents.remove(Integer.valueOf(eventId));
 				
 				for (ServerEventListener listener : eventListeners)
 				{
@@ -115,7 +115,7 @@ public class ServiceHelper
 	{
 		synchronized(pendingEvents)
 		{
-			Integer eventId = new Integer(REFRESH_FINISHED_EVENT);
+			Integer eventId = Integer.valueOf(REFRESH_FINISHED_EVENT);
 			
 			// No point in firing off a duplicate update command.
 			if (pendingEvents.contains(eventId))

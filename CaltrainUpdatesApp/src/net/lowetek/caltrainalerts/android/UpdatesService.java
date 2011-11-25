@@ -47,6 +47,11 @@ public class UpdatesService extends IntentService
 	private static class UpdatesServiceException extends Exception
 	{
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public UpdatesServiceException(Throwable ex) 
 		{
 			super(ex);
@@ -62,7 +67,6 @@ public class UpdatesService extends IntentService
 	public UpdatesService()
 	{
 		super("UpdatesService");
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

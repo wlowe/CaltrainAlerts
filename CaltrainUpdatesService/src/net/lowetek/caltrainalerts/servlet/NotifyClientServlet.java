@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 public class NotifyClientServlet extends HttpServlet 
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String REG_ID_PARM = "reg_id";
 	public static final String DATE_PARM = "date";
 	public static final String COLLAPSE_KEY_PARM = "collapse_key";

@@ -32,6 +32,7 @@ import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
+@SuppressWarnings("serial")
 public class PingClientServlet extends HttpServlet
 {
 	protected static final String REG_ID_PARM = "regId";
@@ -60,6 +61,7 @@ public class PingClientServlet extends HttpServlet
 			Query query = pm.newQuery(UpdateClient.class);
 			query.setFilter("registrationId == '" + regId + "'");
 			query.setRange(0, 1);
+			@SuppressWarnings("unchecked")
 			List<UpdateClient> existingClient = (List<UpdateClient>)query.execute();
 			
 			if (existingClient.isEmpty())
@@ -96,7 +98,7 @@ public class PingClientServlet extends HttpServlet
 			.param("data.regId", regId);	      
         
         // Task queue implements the exponential backoff
-        long jitter = (int) Math.random() * C2DMSettings.MAX_JITTER_MSEC;
+        long jitter = (int) (Math.random() * C2DMSettings.MAX_JITTER_MSEC);
         url.countdownMillis(jitter);
         
         dmQueue.add(url);

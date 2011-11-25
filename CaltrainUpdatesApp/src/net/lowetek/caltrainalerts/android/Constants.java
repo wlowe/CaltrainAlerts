@@ -14,6 +14,7 @@ package net.lowetek.caltrainalerts.android;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import android.net.Uri;
@@ -54,13 +55,25 @@ public final class Constants
 					
 					if (prefsFile.exists() && prefsFile.canRead())
 					{
-						prefs.load(new FileInputStream(prefsFile));
-											
+						FileInputStream stream = null;
+						
+						try
+						{
+							stream = new FileInputStream(prefsFile);
+							prefs.load(stream);
+						}
+						finally
+						{
+							if (stream != null)
+							{
+								stream.close();
+							}
+						}
 					}
 					
 				}
 			}
-			catch(Exception ex)
+			catch(IOException ex)
 			{}
 			
 			prefsLoaded = true;

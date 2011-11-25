@@ -25,6 +25,7 @@ import com.google.appengine.api.datastore.Key;
 public class UpdateClient
 {
 	
+	@SuppressWarnings("unused")
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;

@@ -42,6 +42,7 @@ public class TrainUpdate implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unused")
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
@@ -90,7 +91,7 @@ public class TrainUpdate implements Serializable
 	@Override
 	public String toString()
 	{
-		return "id: " + twitterId + " date: " + getPrettyDate() + " text: " + text;
+		return "id: " + twitterId + " date: " + getPrettyDate(date) + " text: " + text;
 	}
 	
 	public JSONObject getJSON()
@@ -111,9 +112,12 @@ public class TrainUpdate implements Serializable
 		return result;
 	}
 	
-	private String getPrettyDate()
+	private static String getPrettyDate(Date date)
 	{
-		return dateFormatter.format(date);
+		synchronized(dateFormatter)
+		{
+			return dateFormatter.format(date);
+		}
 	}
 
 }

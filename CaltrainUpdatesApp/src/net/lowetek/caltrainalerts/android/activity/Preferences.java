@@ -12,19 +12,14 @@
 
 package net.lowetek.caltrainalerts.android.activity;
 
-import net.lowetek.caltrainalerts.android.C2DMReceiver;
 import net.lowetek.caltrainalerts.android.Constants;
-import net.lowetek.caltrainalerts.android.UpdatesServer;
-import android.app.backup.SharedPreferencesBackupHelper;
+import net.lowetek.caltrainalerts.android.R;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import com.google.android.c2dm.C2DMessaging;
-import net.lowetek.caltrainalerts.android.R;
-
-
 
 public class Preferences extends PreferenceActivity 
 {

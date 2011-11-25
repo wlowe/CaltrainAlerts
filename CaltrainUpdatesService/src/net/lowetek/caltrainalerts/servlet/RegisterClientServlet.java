@@ -58,6 +58,7 @@ public class RegisterClientServlet extends HttpServlet
 			Query query = pm.newQuery(UpdateClient.class);
 			query.setFilter("registrationId == '" + regId + "'");
 			query.setRange(0, 1);
+			@SuppressWarnings("unchecked")
 			List<UpdateClient> existingClient = (List<UpdateClient>)query.execute();
 			
 			if (existingClient.isEmpty())

@@ -210,14 +210,11 @@ public class UpdatesProvider extends ContentProvider
 //        	int numUpdated = 0;
         	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         	builder.setTables(UPDATES_TABLE_NAME);
-        	String headerQuery = "SELECT " + TrainUpdates.TWITTER_ID + " FROM " + UPDATES_TABLE_NAME + " WHERE " + TrainUpdates.DATE + " >= ? AND " + TrainUpdates.DATE + " < ? ORDER BY " + TrainUpdates.TWITTER_ID + " DESC LIMIT 1";//builder.buildQuery(new String[] {TrainUpdates.TWITTER_ID}, TrainUpdates.DATE + " >= ?", null, null, "ASC", "LMIT 1");
-        	long lastId = -1;
+        	String headerQuery = "SELECT " + TrainUpdates.TWITTER_ID + " FROM " + UPDATES_TABLE_NAME + " WHERE " + TrainUpdates.DATE + " >= ? AND " + TrainUpdates.DATE + " < ? ORDER BY " + TrainUpdates.TWITTER_ID + " DESC LIMIT 1";
         	long currId = -1;
         	
-//        	do
         	for (int i = 0; i < 7; i++)
         	{
-        		lastId = currId;
         		Cursor c = db.rawQuery(headerQuery, new String[] {dayStart.toString(), nextDayStart.toString()});
         		try
         		{
@@ -240,10 +237,7 @@ public class UpdatesProvider extends ContentProvider
         		
         		
         	}
-//        	} while (lastId != currId);
-        	
-        	
-        	//TODO: additional stuff here to update headers.
+        		
         	db.setTransactionSuccessful();
         }
         finally

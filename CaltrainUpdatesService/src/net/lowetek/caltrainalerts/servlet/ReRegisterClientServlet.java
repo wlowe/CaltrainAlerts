@@ -69,6 +69,7 @@ public class ReRegisterClientServlet extends HttpServlet
 			Query query = pm.newQuery(UpdateClient.class);
 			query.setFilter("registrationId == '" + oldRegId + "'");
 			query.setRange(0, 1);
+			@SuppressWarnings("unchecked")
 			List<UpdateClient> existingClient = (List<UpdateClient>)query.execute();
 			
 			if (existingClient.isEmpty())
@@ -84,6 +85,7 @@ public class ReRegisterClientServlet extends HttpServlet
 			query = pm.newQuery(UpdateClient.class);
 			query.setFilter("registrationId == '" + newRegId + "'");
 			query.setRange(0, 1);
+			@SuppressWarnings("unchecked")
 			List<UpdateClient> newClient = (List<UpdateClient>)query.execute();
 				
 			if(newClient.isEmpty())

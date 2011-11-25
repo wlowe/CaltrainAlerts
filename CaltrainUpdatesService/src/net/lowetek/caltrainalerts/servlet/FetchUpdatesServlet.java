@@ -120,100 +120,13 @@ public class FetchUpdatesServlet extends HttpServlet
 		{
 			log.log(Level.WARNING, "Error getting tweets", e1);
 		}
-		
-
-//		
-//		
-//		
-//		try {
-//			String urlStr = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + feedName + "&trim_user=1";
-//			
-//			if (sinceId >= 0)
-//			{
-//				urlStr += "&since_id=" + sinceId;
-//			}
-//            
-//			URL url = new URL(urlStr);
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//            String line;
-//            
-//
-//            while ((line = reader.readLine()) != null) {
-//                content.append(line);
-//            }
-//            reader.close();
-//            
-//           // resp.getWriter().print(content.toString());
-//            
-//
-//        } catch (MalformedURLException e) {
-//            // ...
-//        } catch (IOException e) {
-//            // ...
-//        }
-//        
-        
-        
-//        try
-//		{
-//        	//resp.getWriter().println("\n\n===============\n\n");
-//        	JSONArray newEntries = new JSONArray(content.toString());
-//        	//resp.getWriter().println(newEntries.toString());
-//        	int count = newEntries.length();
-//        	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-//        	
-//        	List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();
-//            Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
-//        	resp.getWriter().println("\n\nNew updates: ");
-//        	for (int i = 0; i < count; i++)
-//        	{
-//        		JSONObject currEntry = newEntries.getJSONObject(i);
-//        		long twitterId = currEntry.getLong("id");
-//        		String text = currEntry.getString("text");
-//        		text = timeStampPattern.matcher(text).replaceFirst("");
-//        		String dateStr = currEntry.getString("created_at");
-//        		Date date = dateFormat.parse(dateStr);
-//        		TrainUpdate update = new TrainUpdate(twitterId, text, date);
-//        		newUpdates.add(update);
-//        		log.info("Added update: " + update.toString());
-//        		resp.getWriter().println(update.toString());
-//        		
-//        	}
-//        	
-////        	pm.makePersistentAll(newUpdates);
-//        	DataStorage.addUpdates(newUpdates);
-//    		
-//    		if (!newUpdates.isEmpty())
-//    		{
-//    			TrainUpdate latestUpdate = newUpdates.get(newUpdates.size() - 1);
-//    			Date latestUpdateDate = latestUpdate.getDate();
-//    			long lastestUpdateId = latestUpdate.getTwitterId();
-//    			
-//    			notifyClients(lastestUpdateId, latestUpdateDate/*, pm*/);
-//    		}
-//		}
-//		catch (JSONException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		catch (ParseException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		finally
-//		{
-//			//pm.close();
-//		}
 			
 	}
 
 	private void notifyClients(long latestUpdateId, Date latestUpdateDate/*, PersistenceManager pm*/) 
 	{
 		long timeMillis = latestUpdateDate.getTime();
-		//String timeStr = timeMillis + "";
-		String collapseStr = Long.toString(timeMillis /*/ C2DMSettings.COLLAPSE_FACTOR*/);
+		String collapseStr = Long.toString(timeMillis);
 		com.google.appengine.api.taskqueue.Queue dmQueue = QueueFactory.getQueue("c2dm");
 		PersistenceManager pm = PMF.get().getPersistenceManager();		
 		Extent<UpdateClient> extent = null;						
@@ -232,7 +145,7 @@ public class FetchUpdatesServlet extends HttpServlet
 					.param("data.twitterId", Long.toString(latestUpdateId));	      
 	            
 	            // Task queue implements the exponential backoff
-	            long jitter = (int) Math.random() * C2DMSettings.MAX_JITTER_MSEC;
+	            long jitter = (int) (Math.random() * C2DMSettings.MAX_JITTER_MSEC);
 	            url.countdownMillis(jitter);
 	            
 	            dmQueue.add(url);

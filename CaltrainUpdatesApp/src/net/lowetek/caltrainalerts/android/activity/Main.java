@@ -20,8 +20,6 @@ import net.lowetek.caltrainalerts.android.ServiceHelper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -185,7 +183,6 @@ public class Main extends FragmentActivity implements ServerEventListener
 
 	public void onServerEvent(int eventId, Bundle extras)
 	{
-//		serverEventHandler.sendEmptyMessage(eventId);
 		Message msg = new Message();
 		msg.what = eventId;
 		msg.setData(extras);
