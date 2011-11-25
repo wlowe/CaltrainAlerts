@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
@@ -116,6 +117,12 @@ public class Main extends FragmentActivity implements ServerEventListener
 	        case PREFERENCES_MENU_ID:
 	        	Intent intent = new Intent(this, Preferences.class);
 	        	startActivity(intent);
+	        	return true;
+	        	
+	        case android.R.id.home: // User touched the app logo
+	        	ListFragment alertsList = (ListFragment)getSupportFragmentManager().findFragmentById(R.id.alertsList);
+	        	alertsList.getListView().smoothScrollToPosition(0);
+	        	
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
