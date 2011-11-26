@@ -26,12 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.lowetek.caltrainalerts.data.PMF;
 import net.lowetek.caltrainalerts.data.TrainUpdate;
 
-
 /**
- * 
- */
-
-/**
+ * An admin applet which removes old updates from the data store.
  * @author nopayne
  *
  */

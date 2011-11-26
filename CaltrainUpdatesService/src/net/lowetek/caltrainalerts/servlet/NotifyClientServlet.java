@@ -20,6 +20,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * An admin servlet used to send notifications to a client.
+ * @author nopayne
+ *
+ */
 public class NotifyClientServlet extends HttpServlet 
 {
 	/**

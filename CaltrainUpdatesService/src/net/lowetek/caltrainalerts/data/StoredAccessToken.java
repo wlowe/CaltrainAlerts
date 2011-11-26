@@ -24,6 +24,7 @@ import twitter4j.auth.AccessToken;
 import com.google.appengine.api.datastore.Key;
 
 /**
+ * A wrapper class to store Twitter's access token for OAuth.
  * @author nopayne
  *
  */

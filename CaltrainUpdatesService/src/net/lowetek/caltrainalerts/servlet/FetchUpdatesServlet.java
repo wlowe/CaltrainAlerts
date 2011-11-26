@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -31,7 +32,6 @@ import net.lowetek.caltrainalerts.data.DataStorage;
 import net.lowetek.caltrainalerts.data.PMF;
 import net.lowetek.caltrainalerts.data.TrainUpdate;
 import net.lowetek.caltrainalerts.data.UpdateClient;
-
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -45,21 +45,25 @@ import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
+/**
+ * An admin servlet to fetch new updates from Twitter
+ * @author nopayne
+ *
+ */
 @SuppressWarnings("serial")
 public class FetchUpdatesServlet extends HttpServlet 
 {
 	private static final Logger log = Logger.getLogger(FetchUpdatesServlet.class.getName());
 	private static final Pattern timeStampPattern = Pattern.compile("T\\d\\d:\\d\\d\\z");
-
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		resp.setContentType("text/plain");
 		String feedName = System.getProperty("net.lowetek.feed", "caltrain");
 				
-
-		
-		
+		// Attempt to initialize an authenticated Twitter client.
+		// If this fails, fall back to an anonymous Twitter client.
+		// It's ideal to authenticate because the rate limits increase when doing so.
 		Twitter twitter = null;
 		
 		try
@@ -73,10 +77,13 @@ public class FetchUpdatesServlet extends HttpServlet
 			twitter = new TwitterFactory().getInstance();
 		}
 		
+		// If possible, we'd only like to do an incremental update.
+		// Load the id of the last tweet received.
 		long sinceId = DataStorage.getLatestUpdateId();		
 
 		Paging paging = null;
 		
+		// Pull 200 tweets at a time.
 		if (sinceId >= 0)
 		{
 			paging = new Paging(1, 200, sinceId);
@@ -92,6 +99,7 @@ public class FetchUpdatesServlet extends HttpServlet
 			List<TrainUpdate> newUpdates = new ArrayList<TrainUpdate>();            
         	resp.getWriter().println("\n\nNew updates: ");
 			
+        	// Convert the retrieved statuses into TrainUpdate objects.
 			for (Status status : statuses)
 			{
 				long twitterId = status.getId();
@@ -104,8 +112,10 @@ public class FetchUpdatesServlet extends HttpServlet
         		resp.getWriter().println(update.toString());
 			}
 			
+			// Persist the new updates.
 			DataStorage.addUpdates(newUpdates);
     		
+			// Send notifications to all clients regarding new updates.
     		if (!newUpdates.isEmpty())
     		{
     			TrainUpdate latestUpdate = newUpdates.get(newUpdates.size() - 1);
@@ -118,13 +128,19 @@ public class FetchUpdatesServlet extends HttpServlet
 		}
 		catch (TwitterException e1)
 		{
-			log.log(Level.WARNING, "Error getting tweets", e1);
+			log.log(Level.SEVERE, "Error getting tweets", e1);
 		}
 			
 	}
 
+	/**
+	 * Notifies all clients that new updates are available.
+	 * @param latestUpdateId
+	 * @param latestUpdateDate
+	 */
 	private void notifyClients(long latestUpdateId, Date latestUpdateDate/*, PersistenceManager pm*/) 
 	{
+		Random random = new Random();
 		long timeMillis = latestUpdateDate.getTime();
 		String collapseStr = Long.toString(timeMillis);
 		com.google.appengine.api.taskqueue.Queue dmQueue = QueueFactory.getQueue("c2dm");
@@ -135,6 +151,9 @@ public class FetchUpdatesServlet extends HttpServlet
 		{
 			extent = pm.getExtent(UpdateClient.class);
 				
+			// Iterate through each client and queue up a C2DM request for each.
+			// It'd be nice if we could just fire off a batch requese for all but
+			// C2DM doesn't support this feature. 
 			for (UpdateClient client : extent)
 			{
 				TaskOptions url = 
@@ -144,12 +163,11 @@ public class FetchUpdatesServlet extends HttpServlet
 					.param("data.msgType", "notify")					
 					.param("data.twitterId", Long.toString(latestUpdateId));	      
 	            
-	            // Task queue implements the exponential backoff
-	            long jitter = (int) (Math.random() * C2DMSettings.MAX_JITTER_MSEC);
+	            // Task queue implements the exponential backoff		
+				long jitter = random.nextInt(C2DMSettings.MAX_JITTER_MSEC);
 	            url.countdownMillis(jitter);
 	            
 	            dmQueue.add(url);
-			
 			}
 		}
 		finally
@@ -161,7 +179,5 @@ public class FetchUpdatesServlet extends HttpServlet
 			
 			pm.close();
 		}
-		
-		
 	}
 }

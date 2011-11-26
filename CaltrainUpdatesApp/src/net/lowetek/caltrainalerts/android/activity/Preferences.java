@@ -21,6 +21,11 @@ import android.preference.PreferenceActivity;
 
 import com.google.android.c2dm.C2DMessaging;
 
+/**
+ * The User Preferences Activity.
+ * @author nopayne
+ *
+ */
 public class Preferences extends PreferenceActivity 
 {
 	private class PreferenceChangeListener implements OnSharedPreferenceChangeListener
@@ -32,6 +37,10 @@ public class Preferences extends PreferenceActivity
 			
 			if (autoUpdateKey.equals(key))
 			{
+				// If the user changed the auto-update setting then we must
+				// Update our registration.
+				// TODO: consider deferring this until the user exits the activity.
+				// Make sure to do it asynchronously.
 				SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
 				boolean updateState = prefs.getBoolean(key, true);
 				

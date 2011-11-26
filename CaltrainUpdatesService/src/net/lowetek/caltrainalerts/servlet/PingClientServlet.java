@@ -14,6 +14,7 @@ package net.lowetek.caltrainalerts.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
@@ -32,6 +33,11 @@ import com.google.android.c2dm.server.C2DMessaging;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 
+/**
+ * An admin debug client to send messages to a client.
+ * @author nopayne
+ *
+ */
 @SuppressWarnings("serial")
 public class PingClientServlet extends HttpServlet
 {
@@ -66,8 +72,8 @@ public class PingClientServlet extends HttpServlet
 			
 			if (existingClient.isEmpty())
 			{
-				// Create the new client.
-				log.info("Client doesn't exist: " + regId);
+				// The client couldn't be found.  Abort.
+				log.severe("Client doesn't exist: " + regId);
 				return;
 			}	
 		}
@@ -84,7 +90,6 @@ public class PingClientServlet extends HttpServlet
 		}
 						
 		long timeMillis = System.currentTimeMillis();
-		//String timeStr = timeMillis + "";
 		String collapseStr = Long.toString(timeMillis / C2DMSettings.COLLAPSE_FACTOR);
 		
 		
@@ -98,7 +103,8 @@ public class PingClientServlet extends HttpServlet
 			.param("data.regId", regId);	      
         
         // Task queue implements the exponential backoff
-        long jitter = (int) (Math.random() * C2DMSettings.MAX_JITTER_MSEC);
+		Random random = new Random();
+        long jitter = random.nextInt(C2DMSettings.MAX_JITTER_MSEC);
         url.countdownMillis(jitter);
         
         dmQueue.add(url);

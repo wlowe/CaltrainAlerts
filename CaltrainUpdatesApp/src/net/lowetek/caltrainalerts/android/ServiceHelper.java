@@ -24,6 +24,9 @@ import android.util.Log;
 
 
 /**
+ * A helper class to interact with {@link UpdatesService}.
+ * Clients can register with this class to learn about various
+ * service events.
  * @author nopayne
  *
  */
@@ -31,15 +34,21 @@ public class ServiceHelper
 {
 	private static final String TAG = "ServiceHelper";
 	
+	// Event types
 	public final static int REFRESH_FINISHED_EVENT = 0;
 	public final static int REGISTRATION_FINISHED_EVENT = 1;
 	public final static int SERVICE_ERROR_EVENT = 2;
 	
+	// Keys for items added to the extras bundle
 	public final static String ERROR_MSG_KEY = "ErrorMsgKey";
 	
 	private final static ArrayList<ServerEventListener> eventListeners = new ArrayList<ServerEventListener>();
 	private final static HashSet<Integer> pendingEvents = new HashSet<Integer>();
 	
+	/**
+	 * Registers a class to listen for server events.
+	 * @param newListener
+	 */
 	public static void addListener(ServerEventListener newListener)
 	{
 		synchronized(eventListeners)
@@ -49,6 +58,10 @@ public class ServiceHelper
 		}
 	}
 	
+	/**
+	 * Unregisters a class to listen for server events.
+	 * @param oldListener
+	 */
 	public static void removeListener(ServerEventListener oldListener)
 	{
 		synchronized(eventListeners)
@@ -58,6 +71,11 @@ public class ServiceHelper
 		}
 	}
 	
+	/**
+	 * Determines if the operation related to an event is still pending.
+	 * @param eventId
+	 * @return
+	 */
 	public static boolean isEventPending(int eventId)
 	{
 		synchronized(pendingEvents)
@@ -66,8 +84,15 @@ public class ServiceHelper
 		}
 	}
 	
+	/**
+	 * Called when a server event occurs.
+	 * @param eventId
+	 * @param extras
+	 */
 	public static void onServerEvent(int eventId, Bundle extras)
 	{
+		// TODO: move server related code into its own package.
+		// Make this method package access only.
 		synchronized(eventListeners)
 		{
 			synchronized(pendingEvents)
@@ -132,6 +157,4 @@ public class ServiceHelper
 	}
 	
 	//TODO: register
-	
-	
 }

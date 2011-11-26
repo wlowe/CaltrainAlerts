@@ -36,6 +36,11 @@ import org.json.JSONException;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
+/**
+ * The interface for all communication with the remote app server.
+ * @author nopayne
+ *
+ */
 public class UpdatesServer
 {
 	private static final String TAG = UpdatesServer.class.getSimpleName();
@@ -47,7 +52,13 @@ public class UpdatesServer
 		SERVER = Constants.getUpdatesServerUrl();
 	}
 		
-	
+	/**
+	 * Fetch all new updates from the server.
+	 * @param sinceId
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public static JSONArray fetchUpdates(String sinceId) throws IOException, JSONException
 	{
 		
@@ -94,6 +105,11 @@ public class UpdatesServer
 		return new JSONArray(content);		
 	}
 	
+	/**
+	 * Register a new client with the app server.
+	 * @param regId
+	 * @throws IOException
+	 */
 	public static void registerClient(String regId) throws IOException
 	{
 		if (regId == null)
@@ -158,6 +174,13 @@ public class UpdatesServer
 //		}
 //	}
 	
+	/**
+	 * Reregister with the app server.  
+	 * This removes the old registeration and adds the new one if needed.
+	 * @param oldRegId
+	 * @param newRegId
+	 * @throws IOException
+	 */
 	public static void reRegisterClient(String oldRegId, String newRegId) throws IOException
 	{
 		if (oldRegId == null || newRegId == null)
@@ -188,11 +211,6 @@ public class UpdatesServer
 		if (status.getStatusCode() != 200)
 		{
 			throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
-		}
-		
-		
+		}	
 	}
-
-	
-	
 }

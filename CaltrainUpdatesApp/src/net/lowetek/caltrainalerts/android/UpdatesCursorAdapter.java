@@ -28,6 +28,7 @@ import android.widget.TextView;
 import net.lowetek.caltrainalerts.android.R;
 
 /**
+ * A cursor adapter for populating a list view with train updates. 
  * @author nopayne
  *
  */
@@ -49,10 +50,13 @@ public class UpdatesCursorAdapter extends SimpleCursorAdapter
 		timeFormatter.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 	}
 	
-	
+	/**
+	 * A custom view binder to populate rows in the list view.
+	 * @author nopayne
+	 *
+	 */
 	private static class UpdatesViewBinder implements SimpleCursorAdapter.ViewBinder
 	{
-
 		@Override
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex)
 		{
@@ -69,6 +73,8 @@ public class UpdatesCursorAdapter extends SimpleCursorAdapter
 			{
 				if (cursor.getInt(columnIndex) == 1)
 				{
+					// If this row is the latest entry for a date, populate
+					// its header with a list divider.
 					Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"));
 			        cal.set(Calendar.HOUR_OF_DAY, 0);
 			        cal.set(Calendar.MINUTE, 0);
@@ -94,26 +100,19 @@ public class UpdatesCursorAdapter extends SimpleCursorAdapter
 				else
 				{
 					view.setVisibility(View.GONE);
-				}
-				
+				}	
 			}
-
 			
 			return true;
 		}
 		
 	}
 	
-	
-
 	public UpdatesCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to)
 	{
 		super(context, layout, c, from, to);
 		
-		setViewBinder(new UpdatesViewBinder()); 				
-		
+		// Register our custom view binder.
+		setViewBinder(new UpdatesViewBinder()); 					
 	}
-	
-	
-
 }

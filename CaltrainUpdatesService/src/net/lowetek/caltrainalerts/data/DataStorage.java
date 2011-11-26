@@ -44,6 +44,8 @@ import com.google.appengine.repackaged.org.json.JSONObject;
 public class DataStorage
 {
 	private static Cache cache;
+
+	// Keys for various objects stored in the cache.
 	private static final String CACHED_UPDATES_KEY = "CachedUpdates";
 	private static final String ACCESS_TOKEN_KEY = "AccessToken";
 	private static final String CACHED_QUERIES_KEY = "CachedQueries";
@@ -63,7 +65,11 @@ public class DataStorage
         }
 
 	}
-	
+
+	/**
+	 * Gets the ID of the last pulled train update.
+	 * @return the ID or -1 if there aren't any stored IDs.
+	 */
 	public static long getLatestUpdateId()
 	{
 		StorageStats stats = getStorageStats();
@@ -91,6 +97,8 @@ public class DataStorage
 			return cachedUpdates.get(cachedUpdates.size() - 1).getTwitterId();
 		}
 		
+		// If no cached updates were found, we must query the datastore.
+		
 		long sinceId = -1;		
 		PersistenceManager pm = PMF.get().getPersistenceManager();		
 		
@@ -117,6 +125,10 @@ public class DataStorage
 		return sinceId;
 	}
 	
+	/**
+	 * Adds new updates to storage.
+	 * @param newUpdates
+	 */
 	public static void addUpdates(List<TrainUpdate> newUpdates)
 	{
 		if (newUpdates.isEmpty())
@@ -124,7 +136,7 @@ public class DataStorage
 			return;
 		}
 		
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		// Add the new updates to the list of cached results.
 		@SuppressWarnings("unchecked")
 		List<TrainUpdate> cachedUpdates = (List<TrainUpdate>)cache.get(CACHED_UPDATES_KEY);
 		
@@ -135,9 +147,12 @@ public class DataStorage
 		
 		log.info("Fetched cache with size of : " + cachedUpdates.size());
 		cachedUpdates.addAll(newUpdates);
-		
+		// Update the storage stats
 		StorageStats stats = getStorageStats();
 		stats.setLatestUpdateId(newUpdates.get(0).getTwitterId());
+		
+		// Attempt to persist the updates to the data store.
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try
 		{			
@@ -152,6 +167,7 @@ public class DataStorage
 		}
 		finally
 		{
+			// No matter what happens, store the new cached results.
 			cache.remove(CACHED_QUERIES_KEY);
 			cache.put(CACHED_UPDATES_KEY, cachedUpdates);
 			cache.put(STORAGE_STATS_KEY, stats);
@@ -199,10 +215,10 @@ public class DataStorage
 				JSONObject updateJson = update.getJSON();
 				resultArray.put(updateJson);
 			}
-			
+		
+			// Append any updates that are stored in the cache to this result.
 			@SuppressWarnings("unchecked")
-			List<TrainUpdate> cachedUpdates = (List<TrainUpdate>)cache.get(CACHED_UPDATES_KEY);
-			
+			List<TrainUpdate> cachedUpdates = (List<TrainUpdate>)cache.get(CACHED_UPDATES_KEY);	
 			
 			if (cachedUpdates != null)
 			{
@@ -223,6 +239,7 @@ public class DataStorage
 			pm.close();
 		}
 		
+		// Finally cache the response.
 		String result = resultArray.toString();
 		cachedQueries.put(sinceIdObj, result);
 		cache.put(CACHED_QUERIES_KEY, cachedQueries);
@@ -230,6 +247,10 @@ public class DataStorage
 		return result;
 	}
 	
+	/**
+	 * Saves the access token required by twitter.
+	 * @param accessToken
+	 */
 	public static void setAccessToken(AccessToken accessToken)
 	{
 		StoredAccessToken storedToken = new StoredAccessToken(accessToken);
@@ -253,6 +274,10 @@ public class DataStorage
 		}				
 	}
 	
+	/**
+	 * Retrieves the access token used for interacting with Twitter.
+	 * @return
+	 */
 	public static AccessToken getAccessToken()
 	{
 		// Try to grab the token from the cache.
@@ -289,7 +314,7 @@ public class DataStorage
 		
 	}
 	
-	public static StorageStats getStorageStats()
+	protected static StorageStats getStorageStats()
 	{
 		// Try to grab the token from the cache.
 		StorageStats stats = (StorageStats)cache.get(STORAGE_STATS_KEY);

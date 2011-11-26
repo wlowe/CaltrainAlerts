@@ -15,6 +15,11 @@ package net.lowetek.caltrainalerts.data;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
+/**
+ * A util class for instantiating a single {@link PersistenceManagerFactory}.
+ * @author nopayne
+ *
+ */
 public final class PMF
 {
 	 private static final PersistenceManagerFactory pmfInstance =

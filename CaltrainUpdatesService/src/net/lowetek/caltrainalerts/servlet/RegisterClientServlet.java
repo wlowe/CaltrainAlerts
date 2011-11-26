@@ -25,6 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.lowetek.caltrainalerts.data.PMF;
 import net.lowetek.caltrainalerts.data.UpdateClient;
 
+/**
+ * Registers a client with this app server.
+ * @author nopayne
+ *
+ */
 public class RegisterClientServlet extends HttpServlet 
 {
 	/**
@@ -70,7 +75,7 @@ public class RegisterClientServlet extends HttpServlet
 			}
 			else
 			{
-				log.info("Client already registered: " + regId);
+				log.warning("Client already registered: " + regId);
 			}
 			
 			resp.setStatus(200);

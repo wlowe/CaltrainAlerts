@@ -21,18 +21,29 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.BaseColumns;
 
+/**
+ * Various app global const values
+ * @author nopayne
+ *
+ */
 public final class Constants
 {
 	public static final String AUTHORITY = "net.lowetek.caltrainalerts";
 	
 	public static final String C2DM_SENDER = "caltrainupdates@gmail.com";
 		
-	
+	/**
+	 * The pref object holds debug settings that override internal defaults.
+	 */
 	private static final Properties prefs = new Properties();
 	private static boolean prefsLoaded = false;
 	private static final String PREFS_SERVER_URL = "ServerURL";
 	private static final String SERVER_URL_DEFAULT = "caltrainupdates.appspot.com";
 	
+	/**
+	 * Get the location to use when interacting with the app server.
+	 * @return
+	 */
 	public static String getUpdatesServerUrl()
 	{
 		return getPrefs().getProperty(PREFS_SERVER_URL, SERVER_URL_DEFAULT);						
@@ -84,6 +95,11 @@ public final class Constants
 	
 	private Constants() {}
 	
+	/**
+	 * Column info for Train Update DB entries.
+	 * @author nopayne
+	 *
+	 */
 	public static final class TrainUpdates implements BaseColumns
 	{
 		private TrainUpdates() {}
@@ -111,8 +127,6 @@ public final class Constants
         public static final String DATE = "timestamp";
         
         public static final String DATE_HEADER = "timestamp_header";
-        
-        //public static final String KEY = "key";
         
         public static final String TEXT = "text";
         

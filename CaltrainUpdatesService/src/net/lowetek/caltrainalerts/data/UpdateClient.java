@@ -21,6 +21,13 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 
+/**
+ * A client for receiving updates.
+ * 	TODO: The registrationId is pretty much the only field used in this class.
+ *  Consider removing the extra baggage.
+ * @author nopayne
+ *
+ */
 @PersistenceCapable
 public class UpdateClient
 {

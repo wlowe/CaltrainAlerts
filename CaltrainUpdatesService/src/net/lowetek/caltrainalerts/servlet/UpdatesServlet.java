@@ -21,7 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.lowetek.caltrainalerts.data.DataStorage;
 
-
+/**
+ * A servlet for clients to receive train updates.
+ * The client may optionally request an incremental set of updates
+ * using the sinceId query parameter.
+ * @author nopayne
+ *
+ */
 @SuppressWarnings("serial")
 public class UpdatesServlet extends HttpServlet 
 {

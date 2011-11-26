@@ -26,6 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 import net.lowetek.caltrainalerts.data.PMF;
 import net.lowetek.caltrainalerts.data.UpdateClient;
 
+/**
+ * Updates the registration of a client with this app server.
+ * This is needed because sometimes the C2DM servers don't notify us that
+ * a client has a received a new registration.  Yet, it will still forward messages
+ * from the old registration to the client.  The end result is that the
+ * client will receive duplicate messages (one for the old reg, one for the new).
+ * To fix this, the client should call this servlet.
+ * @author nopayne
+ *
+ */
 public class ReRegisterClientServlet extends HttpServlet 
 {
 	/**

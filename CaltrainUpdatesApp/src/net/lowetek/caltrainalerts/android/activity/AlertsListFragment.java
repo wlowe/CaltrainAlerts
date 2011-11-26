@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 
 /**
+ * The ListView Fragment for displaying updates.
  * @author nopayne
  *
  */

@@ -29,6 +29,7 @@ import twitter4j.auth.RequestToken;
 import com.google.appengine.api.datastore.DatastoreTimeoutException;
 
 /**
+ * The admin callback servlet used for OAuth with Twitter.
  * @author nopayne
  * 
  */

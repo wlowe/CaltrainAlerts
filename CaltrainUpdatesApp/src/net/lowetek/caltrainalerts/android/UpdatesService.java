@@ -30,6 +30,9 @@ import android.util.Log;
 
 
 /**
+ * A service for running server requests in the background.
+ * Clients should interface with the {@link ServiceHelper} class
+ * instead of using this class directly.
  * @author nopayne
  *
  */
@@ -40,13 +43,12 @@ public class UpdatesService extends IntentService
 	private static final String TAG = UpdatesService.class.getSimpleName();
 
 	/**
-	 * An exception to signify errors occuring in this service.
+	 * An exception to signify errors occurring in this service.
 	 * @author nopayne
 	 *
 	 */
 	private static class UpdatesServiceException extends Exception
 	{
-
 		/**
 		 * 
 		 */
@@ -58,6 +60,11 @@ public class UpdatesService extends IntentService
 		}
 	}
 	
+	/**
+	 * A structure to hold the results of a fetch updates call.
+	 * @author nopayne
+	 *
+	 */
 	public static class UpdatesResult
 	{
 		int numUpdates;
@@ -166,8 +173,6 @@ public class UpdatesService extends IntentService
 			
 			if (size > 0)
 			{
-//				ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
-//	            ContentProviderOperation.Builder builder;
 				ContentValues[] values = new ContentValues[size];
 				
 				for (int i = 0; i < size; i++)
@@ -196,17 +201,7 @@ public class UpdatesService extends IntentService
 			Log.e(TAG, "Error parsing updates", ex);
 			throw new UpdatesServiceException(ex);
 		}
-//		catch (RemoteException ex)
-//		{
-//			Log.e(TAG, "Error processing updates", ex);
-//		}
-//		catch (OperationApplicationException ex)
-//		{
-//			Log.e(TAG, "Error processing updates", ex);
-//		}
 		
 		return null;
-	}
-
-	
+	}	
 }

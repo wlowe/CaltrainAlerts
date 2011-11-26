@@ -32,6 +32,7 @@ import android.util.Log;
 
 
 /**
+ * A content provider for train updates.
  * @author nopayne
  *
  */
@@ -98,6 +99,7 @@ public class UpdatesProvider extends ContentProvider
 	@Override
 	public int delete(Uri uri, String where, String[] whereArgs)
 	{
+		//TODO: Is this even called?  If so, it should update the date headers...
 		 SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        int count;
 	        switch (sUriMatcher.match(uri)) {
@@ -196,18 +198,21 @@ public class UpdatesProvider extends ContentProvider
         
         try
         {
+        	// Insert the new values.
         	for (ContentValues value : values)
         	{
         		inserter.insert(value);
         		numRows++;
         	}
         	
+        	// Calculate the new date header rows.
+        	// TODO: it seems like there's a lot of logic in code instead of SQL.
+        	// Investigate a better algorithm for this.
         	ContentValues newHeaderVals = new ContentValues();
         	newHeaderVals.put(TrainUpdates.DATE_HEADER, 0);
         	db.update(UPDATES_TABLE_NAME, newHeaderVals, null, null);
         	
         	newHeaderVals.put(TrainUpdates.DATE_HEADER, 1);
-//        	int numUpdated = 0;
         	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         	builder.setTables(UPDATES_TABLE_NAME);
         	String headerQuery = "SELECT " + TrainUpdates.TWITTER_ID + " FROM " + UPDATES_TABLE_NAME + " WHERE " + TrainUpdates.DATE + " >= ? AND " + TrainUpdates.DATE + " < ? ORDER BY " + TrainUpdates.TWITTER_ID + " DESC LIMIT 1";
@@ -233,9 +238,7 @@ public class UpdatesProvider extends ContentProvider
         		}
         		
         		nextDayStart = dayStart;
-        		dayStart = dayStart - SECONDS_PER_DAY; // Subtract one day.
-        		
-        		
+        		dayStart = dayStart - SECONDS_PER_DAY; // Subtract one day.		
         	}
         		
         	db.setTransactionSuccessful();
@@ -316,7 +319,7 @@ public class UpdatesProvider extends ContentProvider
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
 	{
-		// TODO Auto-generated method stub
+		// This isn't used.
 		return 0;
 	}
 

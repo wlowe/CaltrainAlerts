@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 
 /**
+ * Handles displaying and clearing notifications.
  * @author nopayne
  *
  */
@@ -66,22 +67,29 @@ public class NotificationsHandler
 	public static void showNotification(CharSequence tickerText, CharSequence title, CharSequence message, Context context)
 	{
 		updatesHandler.removeCallbacks(cancelAlertRunable);
+		
+		// Load the preferred ringtone
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String ringtoneKey = context.getString(R.string.ringtoneKey);
 		String defaultAlert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
 		String alertSound = prefs.getString(ringtoneKey, defaultAlert);
+		
 		notification.sound = alertSound != null ? Uri.parse(alertSound) : null;
 		notification.when = System.currentTimeMillis();
 		Intent notificationIntent = new Intent(context, Main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 		notification.tickerText = tickerText;
 		notification.setLatestEventInfo(context, title, message, contentIntent);
+		
+		// Fire off the notification
 		getNotificationManager(context).notify(ALERT_ID, notification);
 	}
 	
 	public static void showNotification(CharSequence tickerText, CharSequence title, CharSequence message, Context context, long delay)
 	{
 		showNotification(tickerText, title, message, context);
+		
+		// Clear out the notification after a while.
 		updatesHandler.postDelayed(cancelAlertRunable, delay);
 	}
 	

@@ -21,6 +21,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
 
 /**
+ * An admin servlet used for the OAuth setup with Twitter.
  * @author nopayne
  *
  */
@@ -37,7 +38,6 @@ public class AuthAccountServlet extends HttpServlet
 		try
 		{
 			Twitter twitter = new TwitterFactory().getInstance();
-//			twitter.setOAuthConsumer(System.getProperty("twitter4j.oauth.consumerKey"), System.getProperty("twitter4j.oauth.consumerSecret"));
 			req.getSession().setAttribute("twitter", twitter);	
 			StringBuffer callbackUrl = req.getRequestURL();
 			int slashIndex = callbackUrl.lastIndexOf("/");
@@ -50,10 +50,6 @@ public class AuthAccountServlet extends HttpServlet
 		catch (TwitterException e)
 		{
 			throw new ServletException(e);
-		}
-		 
+		}	 
 	}
-	
-	
-	
 }

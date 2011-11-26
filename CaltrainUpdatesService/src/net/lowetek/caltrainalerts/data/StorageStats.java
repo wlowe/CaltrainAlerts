@@ -22,6 +22,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 /**
+ * A helper class to track statistics about items persisted in the data store.
  * @author nopayne
  *
  */

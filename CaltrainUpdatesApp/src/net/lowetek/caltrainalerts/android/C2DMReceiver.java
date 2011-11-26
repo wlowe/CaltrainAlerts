@@ -36,7 +36,7 @@ public class C2DMReceiver extends C2DMBaseReceiver
 	public void onError(Context context, String errorId)
 	{
 		Log.e(TAG, errorId);
-		// TODO Auto-generated method stub
+		// TODO propagate these to the UI gracefully.
 
 	}
 

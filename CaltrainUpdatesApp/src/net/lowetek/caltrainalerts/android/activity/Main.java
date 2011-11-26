@@ -32,14 +32,26 @@ import android.widget.Toast;
 
 import com.google.android.c2dm.C2DMessaging;
 
+/**
+ * The main Activity for this application.
+ * @author nopayne
+ *
+ */
 public class Main extends FragmentActivity implements ServerEventListener 
 {		
+	// Action bar item IDs
 	private static final int REFRESH_MENU_ID = 1;
 	private static final int PREFERENCES_MENU_ID = 2;
 	
-    private static final String USER_REFRESH_STATE = "userRefreshState";
+	/**
+	 * A key used to save the state of manual refresh.
+	 */
+    private static final String USER_REFRESH_STATE_KEY = "userRefreshState";
     private boolean manualRefreshInProgress = false;
     
+    /**
+     * Updates the UI in response to server events.
+     */
     private Handler serverEventHandler = new Handler()
     {
     	public void handleMessage(android.os.Message msg)
@@ -83,7 +95,7 @@ public class Main extends FragmentActivity implements ServerEventListener
 		String doAutoUpdateKey = context.getString(R.string.autoUpdateKey);
 		boolean doAutoUpdate = prefs.getBoolean(doAutoUpdateKey, true);
         
-		// If we're not registered yet, register and grab updates.
+		// If we're not registered with the app server yet, register and grab updates.
         if (doAutoUpdate && C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
         {
         	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
@@ -92,7 +104,6 @@ public class Main extends FragmentActivity implements ServerEventListener
 			ServiceHelper.fetchUpdates(getApplicationContext());
         }
     }
-    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -116,22 +127,10 @@ public class Main extends FragmentActivity implements ServerEventListener
 	        case REFRESH_MENU_ID:
 	        	
 	        	Context context = getApplicationContext();
-	        	
-	        	// Connectivity checks removed because Android's implementation of this is buggy...
-//	        	ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(CONNECTIVITY_SERVICE);
-//	        	NetworkInfo netState = connMgr.getActiveNetworkInfo();
-	        	
-//	        	if (netState.isConnected())
-//	        	{
-		        	manualRefreshInProgress = true;
-					setSpinnerState(true);
-					ServiceHelper.fetchUpdates(context);	
-//	        	}
-//	        	else
-//	        	{
-//	        		Toast.makeText(context, "Please enable your network connection", Toast.LENGTH_LONG);
-//	        	}
-					
+	        	manualRefreshInProgress = true;
+	        	setSpinnerState(true);
+				ServiceHelper.fetchUpdates(context);	
+				
 				return true;
 	            
 	        case PREFERENCES_MENU_ID:
@@ -171,14 +170,14 @@ public class Main extends FragmentActivity implements ServerEventListener
     protected void onSaveInstanceState(Bundle outState)
     {    
     	super.onSaveInstanceState(outState);
-    	outState.putBoolean(USER_REFRESH_STATE, manualRefreshInProgress);
+    	outState.putBoolean(USER_REFRESH_STATE_KEY, manualRefreshInProgress);
     }
     
     @Override
     protected void onRestoreInstanceState(Bundle state)
     {
     	super.onRestoreInstanceState(state);
-    	manualRefreshInProgress = state.getBoolean(USER_REFRESH_STATE);
+    	manualRefreshInProgress = state.getBoolean(USER_REFRESH_STATE_KEY);
     }
 
 	public void onServerEvent(int eventId, Bundle extras)

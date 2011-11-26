@@ -16,6 +16,9 @@ import android.os.Bundle;
 
 /**
  * A listener for content events that come from the server.
+ * Clients can implement this and register themselves 
+ * with {@link ServiceHelper} to update UI in response to 
+ * specific server events.
  * 
  * @author nopayne
  *
