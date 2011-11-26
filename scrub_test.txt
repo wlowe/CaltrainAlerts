@@ -1,6 +1,0 @@
-testtesttest
-__TEST_KEY__
-abc
-lalala
-
-and more
