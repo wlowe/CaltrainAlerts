@@ -161,7 +161,8 @@ public class FetchUpdatesServlet extends HttpServlet
 					.param(C2DMessaging.PARAM_REGISTRATION_ID, client.getRegistrationId())
 					.param(C2DMessaging.PARAM_COLLAPSE_KEY, collapseStr)
 					.param("data.msgType", "notify")					
-					.param("data.twitterId", Long.toString(latestUpdateId));	      
+					.param("data.twitterId", Long.toString(latestUpdateId))
+					.param("data.regId", client.getRegistrationId());	      
 	            
 	            // Task queue implements the exponential backoff		
 				long jitter = random.nextInt(C2DMSettings.MAX_JITTER_MSEC);

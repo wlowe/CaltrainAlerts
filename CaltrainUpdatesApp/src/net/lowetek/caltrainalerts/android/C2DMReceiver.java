@@ -60,7 +60,7 @@ public class C2DMReceiver extends C2DMBaseReceiver
 		}
 		else if (!storedRegId.equals(regId))
 		{
-			Log.i(TAG, "got mismatched regId");
+			Log.i(TAG, "got mismatched regId: " + regId + " existing regId: " + storedRegId);
 			try
 			{
 				UpdatesServer.reRegisterClient(regId, storedRegId);

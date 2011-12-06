@@ -352,4 +352,9 @@ public class DataStorage
 			cache.put(STORAGE_STATS_KEY, stats);
 		}				
 	}
+	
+	public static void clearCache()
+	{
+		cache.clear();
+	}
 }

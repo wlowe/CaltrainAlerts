@@ -183,9 +183,14 @@ public class UpdatesServer
 	 */
 	public static void reRegisterClient(String oldRegId, String newRegId) throws IOException
 	{
-		if (oldRegId == null || newRegId == null)
+		if (oldRegId == null)
 		{
-			throw new IllegalArgumentException("Must specify old and new regIds");
+			throw new IllegalArgumentException("Old regId must not be null");
+		}
+		
+		if (newRegId == null)
+		{
+			throw new IllegalArgumentException("New regId must not be null");
 		}
 		
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();

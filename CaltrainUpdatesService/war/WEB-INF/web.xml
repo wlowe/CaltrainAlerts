@@ -5,14 +5,6 @@ xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
-		<servlet-name>JebcorScratch</servlet-name>
-		<servlet-class>net.lowetek.caltrainalerts.servlet.JebcorScratchServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>JebcorScratch</servlet-name>
-		<url-pattern>/jebcorscratch</url-pattern>
-	</servlet-mapping>
-	<servlet>
 		<servlet-name>FetchUpdates</servlet-name>
 		<servlet-class>net.lowetek.caltrainalerts.servlet.FetchUpdatesServlet</servlet-class>
 	</servlet>
@@ -91,6 +83,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>AuthAccount</servlet-name>
 		<url-pattern>/admin/auth</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ClearCache</servlet-name>
+		<servlet-class>net.lowetek.caltrainalerts.servlet.ClearCacheServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ClearCache</servlet-name>
+		<url-pattern>/admin/clearcache</url-pattern>
 	</servlet-mapping>
 	
 	
