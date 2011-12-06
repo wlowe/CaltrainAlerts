@@ -9,7 +9,7 @@ Twitter account.
 
 Developed By 
 ============
-* Walter Lowe - <walter.lowe@gmail.com>
+* Walter Lowe - <jebcor@gmail.com>
 
 Third Party Libraries
 =====================
