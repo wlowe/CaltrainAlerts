@@ -28,6 +28,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.google.android.c2dm.C2DMessaging;
@@ -48,6 +50,8 @@ public class Main extends FragmentActivity implements ServerEventListener
 	 */
     private static final String USER_REFRESH_STATE_KEY = "userRefreshState";
     private boolean manualRefreshInProgress = false;
+    
+    private Menu actionMenu;
     
     /**
      * Updates the UI in response to server events.
@@ -108,6 +112,8 @@ public class Main extends FragmentActivity implements ServerEventListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
+    	actionMenu = menu;
+    	    	
     	MenuItem refresh = menu.add(Menu.NONE, REFRESH_MENU_ID, Menu.NONE, "");
     	refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     	refresh.setIcon(R.drawable.ic_refresh);  
@@ -115,6 +121,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     	MenuItem preferences = menu.add(Menu.NONE, PREFERENCES_MENU_ID, Menu.NONE, "");
     	preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	preferences.setIcon(R.drawable.ic_preferences);
+    	
     	
     	return super.onCreateOptionsMenu(menu);
     }
@@ -190,6 +197,22 @@ public class Main extends FragmentActivity implements ServerEventListener
 	
 	private void setSpinnerState(boolean isActive)
 	{
-		//TODO: feedback for when refreshing...
+		if (isActive)
+		{	
+			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
+			actionMenu.findItem(REFRESH_MENU_ID).getActionView().startAnimation(rotate);
+			
+//			imageRefresh.setVisibility(View.VISIBLE);
+//			buttonRefresh.setVisibility(View.GONE);
+//			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
+//			imageRefresh.startAnimation(rotate);
+		}
+		else
+		{			
+			actionMenu.findItem(REFRESH_MENU_ID).getActionView().clearAnimation();
+//			imageRefresh.clearAnimation();
+//			imageRefresh.setVisibility(View.GONE);			
+//			buttonRefresh.setVisibility(View.VISIBLE);
+		}
 	}
 }
