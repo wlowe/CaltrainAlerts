@@ -28,8 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.support.v4.view.Window;
 import android.widget.Toast;
 
 import com.google.android.c2dm.C2DMessaging;
@@ -49,9 +48,7 @@ public class Main extends FragmentActivity implements ServerEventListener
 	 * A key used to save the state of manual refresh.
 	 */
     private static final String USER_REFRESH_STATE_KEY = "userRefreshState";
-    private boolean manualRefreshInProgress = false;
-    
-    private Menu actionMenu;
+    private boolean manualRefreshInProgress = false;      
     
     /**
      * Updates the UI in response to server events.
@@ -62,7 +59,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     	{
     		if (msg.what == ServiceHelper.REFRESH_FINISHED_EVENT)
     		{    			
-    			setSpinnerState(false);
+    			setProgressBarIndeterminateVisibility(false);
     			
     			if (!manualRefreshInProgress)
     			{
@@ -74,7 +71,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     		}
     		else if (msg.what == ServiceHelper.SERVICE_ERROR_EVENT)
     		{
-    			setSpinnerState(false);
+    			setProgressBarIndeterminateVisibility(false);
     			String errorMessage = msg.getData().getString(ServiceHelper.ERROR_MSG_KEY);
     			
     			if (errorMessage == null)
@@ -92,6 +89,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
         
         Context context = getApplicationContext();
@@ -104,16 +102,14 @@ public class Main extends FragmentActivity implements ServerEventListener
         {
         	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
         	manualRefreshInProgress = true;
-        	setSpinnerState(true);
+        	setProgressBarIndeterminateVisibility(true);
 			ServiceHelper.fetchUpdates(getApplicationContext());
         }
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
-    {
-    	actionMenu = menu;
-    	    	
+    {    	    
     	MenuItem refresh = menu.add(Menu.NONE, REFRESH_MENU_ID, Menu.NONE, "");
     	refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     	refresh.setIcon(R.drawable.ic_refresh);  
@@ -135,7 +131,7 @@ public class Main extends FragmentActivity implements ServerEventListener
 	        	
 	        	Context context = getApplicationContext();
 	        	manualRefreshInProgress = true;
-	        	setSpinnerState(true);
+	        	setProgressBarIndeterminateVisibility(true);
 				ServiceHelper.fetchUpdates(context);	
 				
 				return true;
@@ -162,7 +158,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     {
     	super.onResume();
     	ServiceHelper.addListener(this);
-    	setSpinnerState(manualRefreshInProgress);
+    	setProgressBarIndeterminateVisibility(manualRefreshInProgress);
     }
     
     @Override
@@ -170,7 +166,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     {
     	super.onPause();
     	ServiceHelper.removeListener(this);
-    	setSpinnerState(false);
+    	setProgressBarIndeterminateVisibility(false);
     }
     
     @Override
@@ -193,26 +189,5 @@ public class Main extends FragmentActivity implements ServerEventListener
 		msg.what = eventId;
 		msg.setData(extras);
 		serverEventHandler.sendMessage(msg);
-	}
-	
-	private void setSpinnerState(boolean isActive)
-	{
-		if (isActive)
-		{	
-			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
-			actionMenu.findItem(REFRESH_MENU_ID).getActionView().startAnimation(rotate);
-			
-//			imageRefresh.setVisibility(View.VISIBLE);
-//			buttonRefresh.setVisibility(View.GONE);
-//			Animation rotate = AnimationUtils.loadAnimation(Main.this, R.anim.rotate);
-//			imageRefresh.startAnimation(rotate);
-		}
-		else
-		{			
-			actionMenu.findItem(REFRESH_MENU_ID).getActionView().clearAnimation();
-//			imageRefresh.clearAnimation();
-//			imageRefresh.setVisibility(View.GONE);			
-//			buttonRefresh.setVisibility(View.VISIBLE);
-		}
 	}
 }
