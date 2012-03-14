@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CaltrainUpdates" parent="@style/Theme.Sherlock">
-<!--     	<item name="android:background">#58647e</item> -->
-	<item name="abBackground">@drawable/bg_action_bar</item>
-    <item name="abLogo">@drawable/ic_menu_logo</item>
-    <item name="abDisplayOptions">useLogo|showHome</item>
-    </style>
+<style name="CaltrainUpdates" parent="Theme.Sherlock">
+	<item name="android:actionBarItemBackground">@drawable/bg_action_bar</item>
+	<item name="actionBarItemBackground">@drawable/bg_action_bar</item>
+	<item name="android:actionBarDivider">@drawable/bg_action_bar</item>
+	<item name="actionBarDivider">@drawable/bg_action_bar</item>
+	<item name="android:actionBarStyle">@style/CustomBar</item>		
+	<item name="actionBarStyle">@style/CustomBar</item>
+</style>
+    
+<style name="CustomBar" parent="Widget.Sherlock.ActionBar">
+	<item name="android:background">@drawable/bg_action_bar</item>
+	<item name="background">@drawable/bg_action_bar</item>
+	<item name="android:icon">@drawable/ic_menu_logo</item>
+	<item name="icon">@drawable/ic_menu_logo</item>
+	<item name="android:titleTextStyle">@style/CustomTitle</item>
+	<item name="titleTextStyle">@style/CustomTitle</item>
+</style>
+
+<style name="CustomTitle" parent ="TextAppearance.Sherlock.Widget.ActionBar.Title">
+    <item name="android:textColor">#022135</item>
+</style>
 </resources>

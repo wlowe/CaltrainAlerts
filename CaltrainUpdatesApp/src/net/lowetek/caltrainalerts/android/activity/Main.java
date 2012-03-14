@@ -24,13 +24,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
-import android.support.v4.view.Window;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.c2dm.C2DMessaging;
 
 /**
@@ -38,7 +38,7 @@ import com.google.android.c2dm.C2DMessaging;
  * @author nopayne
  *
  */
-public class Main extends FragmentActivity implements ServerEventListener 
+public class Main extends SherlockFragmentActivity implements ServerEventListener 
 {		
 	// Action bar item IDs
 	private static final int REFRESH_MENU_ID = 1;
@@ -59,7 +59,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     	{
     		if (msg.what == ServiceHelper.REFRESH_FINISHED_EVENT)
     		{    			
-    			setProgressBarIndeterminateVisibility(false);
+    			setSupportProgressBarIndeterminateVisibility(false);
     			
     			if (!manualRefreshInProgress)
     			{
@@ -71,7 +71,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     		}
     		else if (msg.what == ServiceHelper.SERVICE_ERROR_EVENT)
     		{
-    			setProgressBarIndeterminateVisibility(false);
+    			setSupportProgressBarIndeterminateVisibility(false);
     			String errorMessage = msg.getData().getString(ServiceHelper.ERROR_MSG_KEY);
     			
     			if (errorMessage == null)
@@ -89,7 +89,9 @@ public class Main extends FragmentActivity implements ServerEventListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestWindowFeature(com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
+        setSupportProgressBarIndeterminate(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(R.layout.main);
         
         Context context = getApplicationContext();
@@ -102,7 +104,7 @@ public class Main extends FragmentActivity implements ServerEventListener
         {
         	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
         	manualRefreshInProgress = true;
-        	setProgressBarIndeterminateVisibility(true);
+        	setSupportProgressBarIndeterminateVisibility(true);
 			ServiceHelper.fetchUpdates(getApplicationContext());
         }
     }
@@ -118,7 +120,6 @@ public class Main extends FragmentActivity implements ServerEventListener
     	preferences.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	preferences.setIcon(R.drawable.ic_preferences);
     	
-    	
     	return super.onCreateOptionsMenu(menu);
     }
     
@@ -131,7 +132,7 @@ public class Main extends FragmentActivity implements ServerEventListener
 	        	
 	        	Context context = getApplicationContext();
 	        	manualRefreshInProgress = true;
-	        	setProgressBarIndeterminateVisibility(true);
+	        	setSupportProgressBarIndeterminateVisibility(true);
 				ServiceHelper.fetchUpdates(context);	
 				
 				return true;
@@ -143,7 +144,8 @@ public class Main extends FragmentActivity implements ServerEventListener
 	        	
 	        case android.R.id.home: // User touched the app logo
 	        	ListFragment alertsList = (ListFragment)getSupportFragmentManager().findFragmentById(R.id.alertsList);
-	        	alertsList.getListView().smoothScrollToPosition(0);
+	        	ListView view = alertsList.getListView();
+	        	view.smoothScrollToPosition(0);
 	        	
 	        	return true;
 	        default:
@@ -158,7 +160,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     {
     	super.onResume();
     	ServiceHelper.addListener(this);
-    	setProgressBarIndeterminateVisibility(manualRefreshInProgress);
+    	setSupportProgressBarIndeterminateVisibility(manualRefreshInProgress);
     }
     
     @Override
@@ -166,7 +168,7 @@ public class Main extends FragmentActivity implements ServerEventListener
     {
     	super.onPause();
     	ServiceHelper.removeListener(this);
-    	setProgressBarIndeterminateVisibility(false);
+    	setSupportProgressBarIndeterminateVisibility(false);
     }
     
     @Override

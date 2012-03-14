@@ -18,18 +18,19 @@ import net.lowetek.caltrainalerts.android.UpdatesCursorAdapter;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
+
+import com.actionbarsherlock.app.SherlockListFragment;
 
 /**
  * The ListView Fragment for displaying updates.
  * @author nopayne
  *
  */
-public class AlertsListFragment extends ListFragment
+public class AlertsListFragment extends SherlockListFragment
 {
 	/**
      * The columns we are interested in from the database
