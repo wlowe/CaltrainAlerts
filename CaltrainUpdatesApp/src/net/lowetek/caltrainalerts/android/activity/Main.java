@@ -25,6 +25,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -145,7 +147,36 @@ public class Main extends SherlockFragmentActivity implements ServerEventListene
 	        case android.R.id.home: // User touched the app logo
 	        	ListFragment alertsList = (ListFragment)getSupportFragmentManager().findFragmentById(R.id.alertsList);
 	        	ListView view = alertsList.getListView();
+
+	        	// Scroll to the top of the list 
 	        	view.smoothScrollToPosition(0);
+	        	
+	        	// For some reason smoothScroll doesn't always get the job done.
+	        	// As a workaround, we attach a scroll listener to keep the scroll going until we reach the top.
+	        	// At that point, remove the listener.
+	        	view.setOnScrollListener(new OnScrollListener()
+				{					
+					@Override
+					public void onScrollStateChanged(AbsListView view, int scrollState)
+					{
+						if (scrollState == SCROLL_STATE_IDLE)
+						{
+							if (view.getFirstVisiblePosition() == 0)
+							{
+								view.setOnScrollListener(null);
+							}
+							else
+							{
+								view.smoothScrollToPosition(0);
+							}
+						}						
+					}
+					
+					@Override
+					public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+							int totalItemCount)
+					{}
+				});
 	        	
 	        	return true;
 	        default:
