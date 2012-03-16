@@ -20,6 +20,8 @@ import net.lowetek.caltrainalerts.android.ServiceHelper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -94,21 +96,7 @@ public class Main extends SherlockFragmentActivity implements ServerEventListene
         requestWindowFeature(com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
         setSupportProgressBarIndeterminate(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        setContentView(R.layout.main);
-        
-        Context context = getApplicationContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String doAutoUpdateKey = context.getString(R.string.autoUpdateKey);
-		boolean doAutoUpdate = prefs.getBoolean(doAutoUpdateKey, true);
-        
-		// If we're not registered with the app server yet, register and grab updates.
-        if (doAutoUpdate && C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
-        {
-        	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
-        	manualRefreshInProgress = true;
-        	setSupportProgressBarIndeterminateVisibility(true);
-			ServiceHelper.fetchUpdates(getApplicationContext());
-        }
+        setContentView(R.layout.main);                
     }
     
     @Override
@@ -190,6 +178,51 @@ public class Main extends SherlockFragmentActivity implements ServerEventListene
     protected void onResume()
     {
     	super.onResume();
+    	
+    	Context context = getApplicationContext();
+    	
+    	// Initialize user preference defaults if needed.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String firstRunKey = context.getString(R.string.firstRunKey);
+        final String doAutoUpdateKey = context.getString(R.string.autoUpdateKey);        
+        
+        if (prefs.getBoolean(firstRunKey, true))
+        {
+        	Editor prefsEdit = prefs.edit();        	        	
+        	prefsEdit.putBoolean(firstRunKey, false);
+        	
+        	// We must check if each of these preferences is set individually.  
+        	// This is needed because some users won't have the first run flag set.
+        	// It would be bad to overwrite their preferences.
+        	
+        	if (!prefs.contains(doAutoUpdateKey))
+        	{
+        		prefsEdit.putBoolean(doAutoUpdateKey, true);
+        	}        	
+        
+        	final String ringtoneKey = context.getString(R.string.ringtoneKey);
+        	
+        	if (!prefs.contains(ringtoneKey))
+        	{
+	        	String defaultAlert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+	        	prefsEdit.putString(ringtoneKey, defaultAlert);
+        	}
+        	
+        	prefsEdit.commit();
+        }
+        
+		
+		boolean doAutoUpdate = prefs.getBoolean(doAutoUpdateKey, true);
+        
+		// If we're not registered with the app server yet, register and grab updates.
+        if (doAutoUpdate && C2DMessaging.getRegistrationId(getApplicationContext()).length() == 0)
+        {
+        	C2DMessaging.register(getApplicationContext(), Constants.C2DM_SENDER);
+        	manualRefreshInProgress = true;
+        	setSupportProgressBarIndeterminateVisibility(true);
+			ServiceHelper.fetchUpdates(getApplicationContext());
+        }
+    	
     	ServiceHelper.addListener(this);
     	setSupportProgressBarIndeterminateVisibility(manualRefreshInProgress);
     }

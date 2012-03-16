@@ -19,7 +19,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -69,8 +68,7 @@ public class NotificationsHandler
 		// Load the preferred ringtone
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String ringtoneKey = context.getString(R.string.ringtoneKey);
-		String defaultAlert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
-		String alertSound = prefs.getString(ringtoneKey, defaultAlert);
+		String alertSound = prefs.getString(ringtoneKey, null);
 		
 		notification.sound = alertSound != null ? Uri.parse(alertSound) : null;
 		notification.when = System.currentTimeMillis();
