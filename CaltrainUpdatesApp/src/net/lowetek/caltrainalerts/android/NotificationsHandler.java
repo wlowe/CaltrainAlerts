@@ -48,7 +48,10 @@ public class NotificationsHandler
 	{
 		notification.icon = R.drawable.ic_notify_alert;
 		notification.defaults |= Notification.DEFAULT_VIBRATE;
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+		notification.ledARGB =  0xffffff00;
+		notification.ledOnMS = 300;
+		notification.ledOffMS = 1000;
 	}
 	
 	private static NotificationManager getNotificationManager(Context context)
