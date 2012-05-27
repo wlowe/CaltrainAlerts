@@ -4,5 +4,6 @@
     <string name="ringtoneKey">notificationRingtone</string>
     <string name="autoUpdateKey">autoUpdate</string>
     <string name="firstRunKey">firstRun</string>
+    <string name="vibrateOnAlertsKey">notificationVibrate</string>
 </resources>
  

@@ -3,5 +3,6 @@
     <PreferenceCategory android:title="Notifications">
         <CheckBoxPreference android:title="Auto Update" android:summary="Automatically receive new updates." android:key="@string/autoUpdateKey" android:defaultValue="true"/>
         <RingtonePreference android:ringtoneType="notification" android:showDefault="true" android:showSilent="true" android:key="@string/ringtoneKey" android:title="Alert Ringtone" android:summary="Select a ringtone to play when new alerts are received."/>
+        <CheckBoxPreference android:title="Alert Vibrate" android:summary="Vibrate when a new alert is received." android:key="@string/vibrateOnAlertsKey" android:defaultValue="true"/>
     </PreferenceCategory>  
 </PreferenceScreen>

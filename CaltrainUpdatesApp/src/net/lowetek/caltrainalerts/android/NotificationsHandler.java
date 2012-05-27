@@ -47,7 +47,6 @@ public class NotificationsHandler
 	static
 	{
 		notification.icon = R.drawable.ic_notify_alert;
-		notification.defaults |= Notification.DEFAULT_VIBRATE;
 		notification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
 		notification.ledARGB =  0xffffff00;
 		notification.ledOnMS = 300;
@@ -72,9 +71,21 @@ public class NotificationsHandler
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String ringtoneKey = context.getString(R.string.ringtoneKey);
 		String alertSound = prefs.getString(ringtoneKey, null);
+		String vibrateKey = context.getString(R.string.vibrateOnAlertsKey);
+		boolean doVibrate = prefs.getBoolean(vibrateKey, true);
 		
 		notification.sound = alertSound != null ? Uri.parse(alertSound) : null;
 		notification.when = System.currentTimeMillis();
+		
+		if (doVibrate)
+		{
+			notification.defaults |= Notification.DEFAULT_VIBRATE; 
+		}
+		else
+		{
+			notification.defaults &= ~Notification.DEFAULT_VIBRATE;
+		}
+		
 		Intent notificationIntent = new Intent(context, Main.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 		notification.tickerText = tickerText;
