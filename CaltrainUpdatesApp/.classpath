@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ActionBarSherlock4"/>
-	<classpathentry kind="lib" path="/ActionBarSherlock4/libs/android-support-v4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ActionBarSherlock4_1"/>
+	<classpathentry kind="lib" path="/ActionBarSherlock4_1/libs/android-support-v4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
